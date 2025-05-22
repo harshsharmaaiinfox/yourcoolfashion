@@ -13,7 +13,29 @@ body {
 .theme-color-2 {
   --theme-color: #0baf9a;
 }
-
+.footer-address {
+    color: white;
+    display: none ;
+}
+h2.footer-address{
+  display: none !important;
+  margin-bottom: 10px !important;
+}
+@media(max-width:768px){
+  .footer-address {
+    display: block;
+}
+ul.address.my-address {
+    display: none !important;
+}
+h2.footer-address{
+  display: block !important;
+  margin-bottom: 10px !important;
+}
+.desk-h{
+  display: none !important;
+}
+}
 .theme-color-3 {
   --theme-color: #239698;
 }
