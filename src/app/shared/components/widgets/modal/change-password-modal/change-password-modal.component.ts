@@ -27,7 +27,12 @@ export class ChangePasswordModalComponent {
         current_password: new FormControl('', [Validators.required]),
         password: new FormControl('', [Validators.required]),
         password_confirmation: new FormControl('', [Validators.required])
-      },{validator : CustomValidators.MatchValidator('password', 'password_confirmation')})
+      }, {
+        validators: [
+          CustomValidators.MatchValidator('password', 'password_confirmation'),
+          CustomValidators.DifferentFromCurrentPassword('current_password', 'password')
+        ]
+      });
   }
 
   async openModal() {
@@ -55,17 +60,39 @@ export class ChangePasswordModalComponent {
 
   get passwordMatchError() {
     return (
-      this.form?.getError('mismatch') &&
-      this.form?.get('password_confirmation')?.touched
+      this.form.getError('mismatch') &&
+      this.form.get('password_confirmation')?.touched
     );
   }
 
-  submit(){
+  get sameAsCurrentError() {
+    return (
+      this.form.getError('sameAsCurrent') &&
+      this.form.get('password')?.touched
+    );
+  }
+
+  submit() {
     this.form.markAllAsTouched();
-    if(this.form.valid) {
+    if (this.form.valid) {
+      if (this.sameAsCurrentError) {
+        // Show error message for same password
+        alert('New password cannot be the same as your current password');
+        return;
+      }
+      
       this.store.dispatch(new UpdateUserPassword(this.form.value)).subscribe({
         complete: () => {
           this.form.reset();
+          this.modalService.dismissAll();
+          alert('Password updated successfully!');
+        },
+        error: (error) => {
+          if (error.error?.message === 'Current password is incorrect') {
+            alert('Current password is incorrect');
+          } else {
+            alert('Failed to update password. Please try again.');
+          }
         }
       });
     }

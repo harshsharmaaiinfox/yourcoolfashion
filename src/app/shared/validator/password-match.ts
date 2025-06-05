@@ -10,4 +10,18 @@ export class CustomValidators {
         : null;
     };
   }
+
+  static DifferentFromCurrentPassword(currentPassword: string, newPassword: string): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const currentPasswordCtrl = control.get(currentPassword);
+      const newPasswordCtrl = control.get(newPassword);
+      
+      if (currentPasswordCtrl && newPasswordCtrl && 
+          currentPasswordCtrl.value && newPasswordCtrl.value && 
+          currentPasswordCtrl.value === newPasswordCtrl.value) {
+        return { sameAsCurrent: true };
+      }
+      return null;
+    };
+  }
 }
