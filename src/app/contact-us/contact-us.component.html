@@ -5,28 +5,36 @@
     <div class="form">
       <h4>GET IN TOUCH</h4>
       <h2 class="form-headline">Send us a message</h2>
-      <form id="submit-form" action="">
+      <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
         <p>
-          <input id="name" class="form-input" type="text" placeholder="Your Name*">
-          <small class="name-error"></small>
+          <input id="name" class="form-input" type="text" formControlName="name" placeholder="Your Name*">
+          <small class="error-message" *ngIf="contactForm.get('name')?.invalid && contactForm.get('name')?.touched">
+            Please enter a valid name (letters only)
+          </small>
         </p>
         <p>
-          <input id="email" class="form-input" type="email" placeholder="Your Email*">
-          <small class="name-error"></small>
+          <input id="email" class="form-input" type="email" formControlName="email" placeholder="Your Email*">
+          <small class="error-message" *ngIf="contactForm.get('email')?.invalid && contactForm.get('email')?.touched">
+            Please enter a valid email address
+          </small>
         </p>
         <p class="full-width">
-          <input id="company-name" class="form-input" type="text" placeholder="Subject *" required>
-          <small></small>
+          <input id="subject" class="form-input" type="text" formControlName="subject" placeholder="Subject *">
+          <small class="error-message" *ngIf="contactForm.get('subject')?.invalid && contactForm.get('subject')?.touched">
+            Subject is required
+          </small>
         </p>
         <p class="full-width">
-          <textarea  minlength="20" id="message" cols="30" rows="7" placeholder="Your Message*" required></textarea>
-          <small></small>
+          <textarea formControlName="message" minlength="20" id="message" cols="30" rows="7" placeholder="Your Message*"></textarea>
+          <small class="error-message" *ngIf="contactForm.get('message')?.invalid && contactForm.get('message')?.touched">
+            Message is required and must be at least 20 characters
+          </small>
         </p>
         <p class="full-width">
-          <input type="checkbox" id="checkbox" name="checkbox" checked> Yes, I would like to receive communications by call / email about Company's services.
+          <input type="checkbox" formControlName="consent" id="checkbox" name="checkbox"> Yes, I would like to receive communications by call / email about Company's services.
         </p>
         <p class="full-width">
-          <input type="submit" class="submit-btn" value="Submit">
+          <button type="submit" class="submit-btn" [disabled]="!contactForm.valid">Submit</button>
         </p>
       </form>
     </div>
