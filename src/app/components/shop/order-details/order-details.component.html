@@ -113,7 +113,7 @@
                                                     <div class="d-flex align-items-center gap-2">
                                                         <!-- <h4>{{order.payment_method | uppercase }}</h4> -->
                                                         <h4 *ngIf="order?.payment_method === 'fashionwithtrends_neokred'">NeoKred</h4>
-                                                        <h4 *ngIf="order?.payment_method !== 'fashionwithtrends_neokred'">Suraj Cash Free</h4>
+                                                        <h4 *ngIf="order?.payment_method === 'insider_cashfree'">Cash Free</h4>
                                                         <!-- <h4 *ngIf="order?.payment_method === 'zyaada_pay'">Suraj Cash Free</h4>
                                                         <h4 *ngIf="order?.payment_method === 'neoKred'">Fashion with Trends NeoKred</h4>
                                                         <h4 *ngIf="order?.payment_method === 'cash_free'">Cash Free</h4>

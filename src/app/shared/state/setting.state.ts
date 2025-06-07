@@ -68,7 +68,7 @@ export class SettingState {
               },
               {
                 name: 'zyaada_pay',
-                status: true,
+                status: false,
                 title: 'Cash Free',
                 icon: './assets/images/cash_free.jpg',
               },
@@ -77,6 +77,12 @@ export class SettingState {
                 status: false,
                 title: 'Sab Paisa',
                 icon: './assets/images/sub_paisa.png'
+              },
+               {
+                name: 'insider_cashfree',
+                status: true,
+                title: 'cash Free',
+                icon: './assets/images/cash_free.jpg',
               },
             ];
              customValue.general.site_name = "Your Dream Fashion"

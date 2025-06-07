@@ -308,7 +308,7 @@ export class CheckoutComponent {
       case 'zyaada_pay':
         this.checkout(value);
         break;
-      case 'fashionwithtrends_neokred':
+      case 'insider_cashfree':
         this.checkout(value);
         break;
       default:
@@ -853,6 +853,63 @@ export class CheckoutComponent {
     });
   }
 
+    // Gaonvashi CashFree Payment IntegrationAdd commentMore actions
+   initiateInsiderCashFreePaymentIntent(payment_method: string) {
+    const uuid = uuidv4();
+    const userData = localStorage.getItem('account');
+    const parsedUserData = JSON.parse(userData || '{}')?.user || {};
+
+    const payload = {
+      uuid,
+      ...parsedUserData,
+      checkout: this.storeData?.order?.checkout
+    };
+
+    this.cartService.initiateInsiderCashFreePaymentIntent({
+      uuid: payload.uuid,
+      email: payload.email,
+      total: this.storeData?.order?.checkout?.total?.total,
+      phone: parsedUserData.phone,
+      name: parsedUserData.name,
+      address: `${parsedUserData.address?.[0]?.city || ''} ${parsedUserData.address?.[0]?.area || ''}`
+    }).subscribe({
+      next: (response) => {
+        if (response?.R && response?.data) {
+          try {
+            const zyaadaPayData = response.data;
+
+            if (zyaadaPayData?.payment_url) {
+              // Open the payment page in a new tab/window
+              const paymentWindow = window.open(
+                zyaadaPayData.payment_url, 
+                'PaymentWindow', 
+                'width=600,height=700,left=100,top=100,resizable=yes,scrollbars=yes'
+              );
+
+              if (!paymentWindow) {
+                console.error("Popup blocked. Please allow pop-ups for this site.");
+              } else {
+                // Start polling for payment status
+                let action = new PlaceOrder(this.form.value);
+                this.checkTransactionStatusZyaadaPay(uuid, action.payload, paymentWindow, payment_method);
+              }
+            } else {
+              console.error("Invalid response: Payment link is missing.");
+            }
+          } catch (error) {
+              console.error("Error parsing Zyaada Pay response:", error);
+          }
+        } else {
+          console.error("Payment initiation failed:", response?.msg);
+        }
+      },
+      error: (err) => {
+        console.log("Error initiating payment:", err);
+      }
+    });
+  }
+
+
   // Fashion with Trends NeoKred Payment Integration
   initiateFashionWithTrendsNeoCredIntent(payment_method: string, uuid: any, order_result: any) {
     const userData = localStorage.getItem('account');
@@ -1066,6 +1123,9 @@ export class CheckoutComponent {
       }
       if(this.payment_method === 'zyaada_pay') {
         this.initiateZyaadaPayPaymentIntent(this.payment_method);
+      }
+       if(this.payment_method === 'insider_cashfree') {
+        this.initiateInsiderCashFreePaymentIntent(this.payment_method);
       }
       if(this.payment_method === 'fashionwithtrends_neokred') {
         this.orderService.placeOrder(action?.payload).pipe(
