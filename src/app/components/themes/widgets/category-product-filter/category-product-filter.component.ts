@@ -19,6 +19,7 @@ export class CategoryProductFilterComponent {
   @Input() data: any;
   @Input() sliderOption: OwlOptions;
   @Input() grid: number = 3;
+  @Input() priceRange: string;
   
   @Select(ThemeOptionState.themeOptions) themeOption$: Observable<Option>;
   @Select(ProductState.categoryProducts) categoryProduct$: Observable<Product[]>;

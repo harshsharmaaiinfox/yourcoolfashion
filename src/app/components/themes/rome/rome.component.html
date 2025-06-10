@@ -73,7 +73,7 @@
 
   <!-- Product Section Start -->
   <section class="product-section" *ngIf="data?.content?.categories_products?.status && data?.content?.categories_products?.category_ids?.length">
-    <app-category-product-filter [data]="data?.content" [grid]="showProductBox"></app-category-product-filter>
+    <app-category-product-filter [priceRange]="'300-1000'" [data]="data?.content" [grid]="showProductBox"></app-category-product-filter>
   </section>
   <!-- Product Section End -->
 
