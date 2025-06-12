@@ -131,15 +131,15 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- <div class="col-md-6">
+                                    <div class="col-md-6">
                                         <div class="mb-3 form-box">
                                             <label for="spincode" class="form-label">{{ 'Pincode' | translate }}</label>
-                                            <input type="text" class="form-control" formControlName="pincode"  id="spincode" placeholder="{{ 'Enter Pincode' | translate }}">
+                                            <input type="text" class="form-control" formControlName="pincode" id="spincode" placeholder="{{ 'Enter Pincode' | translate }}" maxlength="6">
                                             <div *ngIf="form.get('shipping_address.pincode')?.touched && form.get('shipping_address.pincode')?.errors?.['required']" class="invalid-feedback">
                                                 {{ 'Pincode is Required' | translate }}
                                             </div>
                                         </div>
-                                    </div> -->
+                                    </div>
                                     <div class="col-md-12 phone-field">
                                         <div class="form-box position-relative">
                                           <label class="form-label" for="phone">{{ 'Phone Number' | translate }}</label>
@@ -227,15 +227,15 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- <div class="col-md-6">
+                                    <div class="col-md-6">
                                         <div class="mb-3 form-box">
                                             <label for="pincode" class="form-label">{{ 'Pincode' | translate }}</label>
-                                            <input type="text" class="form-control" formControlName="pincode" id="pincode" placeholder="{{ 'Enter Pincode' | translate }}">
+                                            <input type="text" class="form-control" formControlName="pincode" id="pincode" placeholder="{{ 'Enter Pincode' | translate }}" maxlength="6">
                                             <div *ngIf="form.get('billing_address.pincode')?.touched && form.get('billing_address.pincode')?.errors?.['required']" class="invalid-feedback">
                                                 {{ 'Pincode is Required' | translate }}
                                             </div>
                                         </div>
-                                    </div> -->
+                                    </div>
                                     <div class="col-md-12 phone-field">
                                         <div class="form-box position-relative">
                                           <label class="form-label" for="phone">{{ 'Phone Number' | translate }}</label>
@@ -580,7 +580,7 @@
                                             <p class="text-muted">
                                                 Please scan the QR code with any UPI app to pay for your order. 
                                                 After payment, enter the UPI Reference ID or Transaction Number (e.g. 401422121258) on the next screen.
-                                                We’ll manually verify your payment using the provided information.
+                                                We'll manually verify your payment using the provided information.
                                             </p>
                                             <div class="payment-icons">
                                                 <img src="/assets/images/payments.png" alt="UPI">

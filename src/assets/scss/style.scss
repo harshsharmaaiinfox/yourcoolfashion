@@ -419,10 +419,11 @@ header .top-nav {
   fill: #000000;
   color: #000000;
 }
+.checkout-form-section .checkbox-main-box  span {
+    color: #000000 !important;
+}
 @media(max-width:1200px){
-  .navbar-bottom{
-    display: none !important;
-  }
+
 }
 @media(min-width:1200px){
   .mob-menu{

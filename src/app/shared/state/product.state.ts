@@ -137,31 +137,37 @@ export class ProductState {
     );
   }
 
-  @Action(GetCategoryProducts)
-  getCategoryProducts(ctx: StateContext<ProductStateModel>, action: GetProducts) {
-     if (action.payload) { action.payload['store_id'] = 24, action.payload['price'] = '300-1000' }
-    return this.productService.getProducts(action.payload).pipe(
-      tap({
-        next: (result: ProductModel) => {
-          const state = ctx.getState();
-          ctx.patchState({
-            ...state,
-            product: {
-              data: [...state.product.data, ...result.data],
-              total: state.product.data.length + result.data.length
-            },
-            categoryProducts: result.data
-          });
-        },
-        complete: () => {
-          this.themeOptionService.preloader = false;
-        },
-        error: err => {
-          throw new Error(err?.error?.message);
-        }
-      })
-    );
+@Action(GetCategoryProducts)
+getCategoryProducts(ctx: StateContext<ProductStateModel>, action: GetProducts) {
+  if (action.payload) {
+    action.payload['store_id'] = 24;
+    action.payload['price'] = '290-950';
+    action.payload['sortBy'] = 'price'; // Sort by price
   }
+  return this.productService.getProducts(action.payload).pipe(
+    tap({
+      next: (result: ProductModel) => {
+        const state = ctx.getState();
+        // Ensure data is sorted by price in ascending order
+        const sortedData = result.data.sort((a, b) => a.price - b.price);
+        ctx.patchState({
+          ...state,
+          product: {
+            data: [...state.product.data, ...sortedData],
+            total: state.product.data.length + sortedData.length
+          },
+          categoryProducts: sortedData
+        });
+      },
+      complete: () => {
+        this.themeOptionService.preloader = false;
+      },
+      error: err => {
+        throw new Error(err?.error?.message);
+      }
+    })
+  );
+}
 
   @Action(GetStoreProducts)
   getStoreProducts(ctx: StateContext<ProductStateModel>, action: GetProducts) {
