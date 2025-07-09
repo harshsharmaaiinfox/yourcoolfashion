@@ -1,10 +1,21 @@
 
-<!-- Rome Theme-->
-<div class="container-fluid-lg banner-set" *ngIf="theme && theme == 'rome'">
+
+<!-- Rome Theme -->
+<div class="container-fluid-lg banner-set" *ngIf="theme === 'rome'">
   <div class="row g-4">
-    <div class="col-xxl-12 banner-home" onclick="window.location.href='collections?category=women&sortBy=asc'">
-      <img src="../../../../../assets/images/cool-banner.png" class="img-fluid" alt="loader" />
+    <div class="col-xxl-12 banner-home">
+      <a [routerLink]="['/collections']" [queryParams]="{ category: 'women', sortBy: 'asc' }">
+        <picture>
+          <source srcset="../../../../../assets/images/cool-banner.png" type="image/webp">
+          <img 
+            src="../../../../../assets/images/cool-banner.png" 
+            class="img-fluid" 
+            alt="Women's fashion banner" 
+            loading="eager" 
+            fetchpriority="high"
+          />
+        </picture>
+      </a>
     </div>
   </div>
 </div>
-

@@ -31,23 +31,30 @@
 
   <!-- My Cystom Section -->
 
-
-  <section class="overflow-hidden">
-    <div class="card-section container-fluid-lg">
-      <div class="col-xxl-12 text-center">
-         <h3>Modern Essentials Collection</h3>
-        <p class="pt-2">Step into effortless style with our latest collection—designed for the modern individual who values comfort, sophistication, and timeless fashion. From cozy knits to structured blazers, this curated lineup blends classic tones with contemporary cuts. Whether you're dressing for work, leisure, or anything in between, our new arrivals help you feel confident, polished, and ready for any moment.</p>
-
-      </div>
-      <div class="card-main d-flex justify-content-between mt-3 gap-3">
+  
+<section class="overflow-hidden">
+  <div class="card-section container-fluid-lg">
+    <div class="col-xxl-12 text-center">
+      <h3>Modern Essentials Collection</h3>
+      <p class="pt-2">Step into effortless style with our latest collection—designed for the modern individual who values comfort, sophistication, and timeless fashion. From cozy knits to structured blazers, this curated lineup blends classic tones with contemporary cuts. Whether you're dressing for work, leisure, or anything in between, our new arrivals help you feel confident, polished, and ready for any moment.</p>
+    </div>
+    <div class="card-main d-flex justify-content-between mt-3 gap-3">
       <div class="card-inner col-lg-12">
-          <img src="../../../../assets/images/bottom-banner.png" alt="Crisp Cotton Sarees">
-        </div>
+        <a [routerLink]="['/collections']" [queryParams]="{ category: 'modern-essentials' }">
+          <picture>
+            <source srcset="../../../../assets/images/bottom-banner.png" type="image/webp">
+            <img 
+              src="../../../../assets/images/bottom-banner.png" 
+              alt="Modern Essentials Collection Banner" 
+              class="img-fluid" 
+              loading="lazy"
+            />
+          </picture>
+        </a>
       </div>
     </div>
-  </section>
-  
-
+  </div>
+</section>
 
 <!-- My Cystom Section End -->
 
