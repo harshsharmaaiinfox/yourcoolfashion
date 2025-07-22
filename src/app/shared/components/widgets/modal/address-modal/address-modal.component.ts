@@ -57,7 +57,7 @@ export class AddressModalComponent {
 
   ) {
     this.form = this.formBuilder.group({
-      title: new FormControl('', [Validators.required]),
+      title: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z0-9\s]+$/)]),
       street: new FormControl('', [Validators.required]),
       state_id: new FormControl('', [Validators.required]),
       country_id: new FormControl('', [Validators.required]),
@@ -269,6 +269,19 @@ export class AddressModalComponent {
       this.form.controls['pincode'].enable();
       const filterPinCode = this.officeNameData.filter((dataz: any) => dataz.label == data.value);
       this.form.controls['pincode'].setValue(filterPinCode.length ? filterPinCode[0].Pincode : '');
+    }
+  }
+
+  onTitleInput(event: any) {
+    const input = event.target;
+    const value = input.value;
+    // Remove special characters, keep only letters, numbers, and spaces
+    const cleanValue = value.replace(/[^A-Za-z0-9\s]/g, '');
+    
+    // Update the input value if it was changed
+    if (value !== cleanValue) {
+      input.value = cleanValue;
+      this.form.controls['title'].setValue(cleanValue);
     }
   }
 
