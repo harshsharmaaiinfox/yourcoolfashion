@@ -57,7 +57,7 @@ export class AddressModalComponent {
 
   ) {
     this.form = this.formBuilder.group({
-      title: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z0-9\s]+$/)]),
+      title: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z\s]+$/)]),
       street: new FormControl('', [Validators.required]),
       state_id: new FormControl('', [Validators.required]),
       country_id: new FormControl('', [Validators.required]),
@@ -275,8 +275,8 @@ export class AddressModalComponent {
   onTitleInput(event: any) {
     const input = event.target;
     const value = input.value;
-    // Remove special characters, keep only letters, numbers, and spaces
-    const cleanValue = value.replace(/[^A-Za-z0-9\s]/g, '');
+    // Remove special characters and numbers, keep only letters and spaces
+    const cleanValue = value.replace(/[^A-Za-z\s]/g, '');
     
     // Update the input value if it was changed
     if (value !== cleanValue) {

@@ -42,7 +42,7 @@ export class RegisterComponent {
     private notificationService: NotificationService
   ) {
     this.form = this.formBuilder.group({
-      name: new FormControl('', [Validators.required]),
+      name: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z\s]+$/)]),
       email: new FormControl('', [Validators.required, Validators.email]),
       phone: new FormControl('', [Validators.required, Validators.pattern(/^[0-9]*$/)]),
       country_code: new FormControl('91', [Validators.required]),
@@ -75,6 +75,19 @@ export class RegisterComponent {
       }
     });
 
+  }
+
+  onNameInput(event: any) {
+    const input = event.target;
+    const value = input.value;
+    // Remove special characters and numbers, keep only letters and spaces
+    const cleanValue = value.replace(/[^A-Za-z\s]/g, '');
+    
+    // Update the input value if it was changed
+    if (value !== cleanValue) {
+      input.value = cleanValue;
+      this.form.controls['name'].setValue(cleanValue);
+    }
   }
 
   get passwordMatchError() {

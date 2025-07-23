@@ -32,7 +32,7 @@ export class EditProfileModalComponent {
       this.user$.subscribe(user => {
         this.flicker = true;
         this.form = this.formBuilder.group({
-          name: new FormControl(user?.name, [Validators.required]),
+          name: new FormControl(user?.name, [Validators.required, Validators.pattern(/^[A-Za-z\s]+$/)]),
           email: new FormControl(user?.email, [Validators.required, Validators.email]),
           phone: new FormControl(user?.phone, [Validators.required, Validators.pattern(/^[0-9]*$/)]),
           country_code: new FormControl(user?.country_code), 
@@ -41,6 +41,19 @@ export class EditProfileModalComponent {
         });
         setTimeout( () => this.flicker = false, 200);
       });
+  }
+
+  onNameInput(event: any) {
+    const input = event.target;
+    const value = input.value;
+    // Remove special characters and numbers, keep only letters and spaces
+    const cleanValue = value.replace(/[^A-Za-z\s]/g, '');
+    
+    // Update the input value if it was changed
+    if (value !== cleanValue) {
+      input.value = cleanValue;
+      this.form.controls['name'].setValue(cleanValue);
+    }
   }
 
   async openModal() {

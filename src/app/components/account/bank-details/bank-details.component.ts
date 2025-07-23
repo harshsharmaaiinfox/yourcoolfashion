@@ -20,13 +20,52 @@ export class BankDetailsComponent {
 
   constructor(private store: Store) {
     this.form = new FormGroup({
-      bank_account_no: new FormControl(),
-      bank_name: new FormControl(),
-      bank_holder_name: new FormControl(),
+      bank_account_no: new FormControl('', [Validators.pattern(/^[0-9]+$/)]),
+      bank_name: new FormControl('', [Validators.pattern(/^[A-Za-z\s]+$/)]),
+      bank_holder_name: new FormControl('', [Validators.pattern(/^[A-Za-z\s]+$/)]),
       swift: new FormControl(),
       ifsc: new FormControl(),
       paypal_email: new FormControl('', [Validators.email]),
     });
+  }
+
+  onBankAccountNoInput(event: any) {
+    const input = event.target;
+    const value = input.value;
+    // Remove special characters, keep only numbers
+    const cleanValue = value.replace(/[^0-9]/g, '');
+    
+    // Update the input value if it was changed
+    if (value !== cleanValue) {
+      input.value = cleanValue;
+      this.form.controls['bank_account_no'].setValue(cleanValue);
+    }
+  }
+
+  onBankNameInput(event: any) {
+    const input = event.target;
+    const value = input.value;
+    // Remove special characters and numbers, keep only letters and spaces
+    const cleanValue = value.replace(/[^A-Za-z\s]/g, '');
+    
+    // Update the input value if it was changed
+    if (value !== cleanValue) {
+      input.value = cleanValue;
+      this.form.controls['bank_name'].setValue(cleanValue);
+    }
+  }
+
+  onBankHolderNameInput(event: any) {
+    const input = event.target;
+    const value = input.value;
+    // Remove special characters and numbers, keep only letters and spaces
+    const cleanValue = value.replace(/[^A-Za-z\s]/g, '');
+    
+    // Update the input value if it was changed
+    if (value !== cleanValue) {
+      input.value = cleanValue;
+      this.form.controls['bank_holder_name'].setValue(cleanValue);
+    }
   }
 
   ngOnInit(): void {

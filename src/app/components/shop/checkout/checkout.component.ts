@@ -110,13 +110,13 @@ export class CheckoutComponent {
       delivery_interval: new FormControl(),
       payment_method: new FormControl('', [Validators.required]),
       create_account: new FormControl(false),
-      name: new FormControl('', [Validators.required]),
+      name: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z\s]+$/)]),
       email: new FormControl('', [Validators.required, Validators.email]),
       country_code: new FormControl('91', [Validators.required]),
       phone: new FormControl('', [Validators.required]),
       password: new FormControl(),
       shipping_address: new FormGroup({
-        title: new FormControl('', [Validators.required]),
+        title: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z\s]+$/)]),
         street: new FormControl('', [Validators.required]),
         city: new FormControl('', [Validators.required]),
         phone: new FormControl('', [Validators.required]),
@@ -127,7 +127,7 @@ export class CheckoutComponent {
       }),
       billing_address: new FormGroup({
         same_shipping: new FormControl(false),
-        title: new FormControl('', [Validators.required]),
+        title: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z\s]+$/)]),
         street: new FormControl('', [Validators.required]),
         city: new FormControl('', [Validators.required]),
         phone: new FormControl('', [Validators.required]),
@@ -240,6 +240,45 @@ export class CheckoutComponent {
     
     this.localUserCheck = JSON.parse(localStorage.getItem('account') || '');
     
+  }
+
+  onNameInput(event: any) {
+    const input = event.target;
+    const value = input.value;
+    // Remove special characters and numbers, keep only letters and spaces
+    const cleanValue = value.replace(/[^A-Za-z\s]/g, '');
+    
+    // Update the input value if it was changed
+    if (value !== cleanValue) {
+      input.value = cleanValue;
+      this.form.controls['name'].setValue(cleanValue);
+    }
+  }
+
+  onShippingTitleInput(event: any) {
+    const input = event.target;
+    const value = input.value;
+    // Remove special characters and numbers, keep only letters and spaces
+    const cleanValue = value.replace(/[^A-Za-z\s]/g, '');
+    
+    // Update the input value if it was changed
+    if (value !== cleanValue) {
+      input.value = cleanValue;
+      this.form.get('shipping_address.title')?.setValue(cleanValue);
+    }
+  }
+
+  onBillingTitleInput(event: any) {
+    const input = event.target;
+    const value = input.value;
+    // Remove special characters and numbers, keep only letters and spaces
+    const cleanValue = value.replace(/[^A-Za-z\s]/g, '');
+    
+    // Update the input value if it was changed
+    if (value !== cleanValue) {
+      input.value = cleanValue;
+      this.form.get('billing_address.title')?.setValue(cleanValue);
+    }
   }
 
   get productControl(): FormArray {
