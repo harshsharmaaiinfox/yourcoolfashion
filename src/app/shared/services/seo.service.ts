@@ -56,7 +56,12 @@ export class SeoService {
       this.updateSeo(this.path)
     });
     
-    this.fetchData(); 
+    this.fetchData();
+    
+    // Set initial SEO immediately
+    setTimeout(() => {
+      this.updateDefaultSeo();
+    }, 100);
   }
 
   fetchData() {
@@ -135,23 +140,31 @@ export class SeoService {
   }
 
   updateDefaultSeo(){
+    // Default SEO values
+    const defaultTitle = "Trendy Men's, Women's, Sports & Streetwear Clothing Online";
+    const defaultDescription = "Discover Stylish men's, women's, sports, and streetwear clothing. Shop the latest fashion online at your Cool Fashion at unbeatable prices.";
+    
+    // Use theme options if available, otherwise use defaults
+    const title = this.themeOption?.seo?.meta_title || defaultTitle;
+    const description = this.themeOption?.seo?.meta_description || defaultDescription;
+    const currentUrl = window.location.href;
  
-    this.meta.updateTag({ name: 'title', content: this.themeOption?.seo?.meta_title });
-    this.meta.updateTag({ name: 'description', content: this.themeOption?.seo?.meta_description });
+    this.meta.updateTag({ name: 'title', content: title });
+    this.meta.updateTag({ name: 'description', content: description });
 
     // Update Facebook Meta Tags
     this.meta.updateTag({ property: 'og:type', content: 'website' });
-    this.meta.updateTag({ property: 'og:url', content: this.scoContent['url'] });
-    this.meta.updateTag({ property: 'og:title', content: this.themeOption?.seo?.meta_title });
-    this.meta.updateTag({ property: 'og:description', content: this.themeOption?.seo?.meta_description });
-    this.meta.updateTag({ property: 'og:image', content: this.scoContent['og_image'] });
+    this.meta.updateTag({ property: 'og:url', content: currentUrl });
+    this.meta.updateTag({ property: 'og:title', content: title });
+    this.meta.updateTag({ property: 'og:description', content: description });
+    this.meta.updateTag({ property: 'og:image', content: this.scoContent['og_image'] || this.themeOption?.seo?.og_image?.original_url });
 
     // Update Twitter Meta Tags
     this.meta.updateTag({ property: 'twitter:card', content: 'summary_large_image' });
-    this.meta.updateTag({ property: 'twitter:url', content: this.scoContent['url'] });
-    this.meta.updateTag({ property: 'twitter:title', content: this.themeOption?.seo?.meta_title });
-    this.meta.updateTag({ property: 'twitter:description', content: this.themeOption?.seo?.meta_description });
-    this.meta.updateTag({ property: 'twitter:image', content: this.scoContent['og_image'] });
+    this.meta.updateTag({ property: 'twitter:url', content: currentUrl });
+    this.meta.updateTag({ property: 'twitter:title', content: title });
+    this.meta.updateTag({ property: 'twitter:description', content: description });
+    this.meta.updateTag({ property: 'twitter:image', content: this.scoContent['og_image'] || this.themeOption?.seo?.og_image?.original_url });
 
     if(this.themeOption?.general && this.themeOption?.general?.exit_tagline_enable){
       document.addEventListener('visibilitychange', () => {
@@ -170,21 +183,27 @@ export class SeoService {
       this.scoContent = {
         ...this.scoContent,
         'url': window.location.href,
-        'og_title': this.themeOption?.seo?.meta_title,
-        'og_description': this.themeOption?.seo?.meta_description,
+        'og_title': this.themeOption?.seo?.meta_title || "Trendy Men's, Women's, Sports & Streetwear Clothing Online",
+        'og_description': this.themeOption?.seo?.meta_description || "Discover Stylish men's, women's, sports, and streetwear clothing. Shop the latest fashion online at your Cool Fashion at unbeatable prices.",
         'og_image': this.themeOption?.seo?.og_image?.original_url,
       }
       
       this.customSCO()
     }else {
-      return this.titleService.setTitle(this.themeOption?.general?.site_title && this.themeOption?.general?.site_tagline
-        ? `${this.themeOption?.general?.site_title} | ${this.themeOption?.general?.site_tagline}` : '')
+      const siteTitle = this.themeOption?.general?.site_title || "Your Cool Fashion";
+      const siteTagline = this.themeOption?.general?.site_tagline || "Trendy Men's, Women's, Sports & Streetwear Clothing Online";
+      return this.titleService.setTitle(`${siteTitle} | ${siteTagline}`);
     }
   }
  
   customSCO(){
-    const title = this.scoContent['og_title'];
-    const description = this.scoContent['og_description'];
+    // Default SEO values as fallback
+    const defaultTitle = "Trendy Men's, Women's, Sports & Streetwear Clothing Online";
+    const defaultDescription = "Discover Stylish men's, women's, sports, and streetwear clothing. Shop the latest fashion online at your Cool Fashion at unbeatable prices.";
+    
+    const title = this.scoContent['og_title'] || defaultTitle;
+    const description = this.scoContent['og_description'] || defaultDescription;
+    const currentUrl = this.scoContent['url'] || window.location.href;
 
     this.titleService.setTitle(title);
     this.meta.updateTag({ name: 'title', content: title });
@@ -192,17 +211,17 @@ export class SeoService {
 
     // Update Facebook Meta Tags
     this.meta.updateTag({ property: 'og:type', content: 'website' });
-    this.meta.updateTag({ property: 'og:url', content: this.scoContent['url'] });
+    this.meta.updateTag({ property: 'og:url', content: currentUrl });
     this.meta.updateTag({ property: 'og:title', content: title });
     this.meta.updateTag({ property: 'og:description', content: description });
-    this.meta.updateTag({ property: 'og:image', content: this.scoContent['og_image'] });
+    this.meta.updateTag({ property: 'og:image', content: this.scoContent['og_image'] || this.themeOption?.seo?.og_image?.original_url });
 
     // Update Twitter Meta Tags
     this.meta.updateTag({ property: 'twitter:card', content: 'summary_large_image' });
-    this.meta.updateTag({ property: 'twitter:url', content: this.scoContent['url'] });
+    this.meta.updateTag({ property: 'twitter:url', content: currentUrl });
     this.meta.updateTag({ property: 'twitter:title', content: title });
     this.meta.updateTag({ property: 'twitter:description', content: description });
-    this.meta.updateTag({ property: 'twitter:image', content: this.scoContent['og_image'] });
+    this.meta.updateTag({ property: 'twitter:image', content: this.scoContent['og_image'] || this.themeOption?.seo?.og_image?.original_url });
   }
 
   updateMessage() {
