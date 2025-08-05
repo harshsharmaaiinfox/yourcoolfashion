@@ -38,10 +38,13 @@
           </div>
         </div>
       </div> -->
-      <!-- <ng-container *ngIf="!filter['store_slug'] && !hideFilter?.includes('attribute')">
+
+
+
+      <ng-container *ngIf="!filter['store_slug'] && !hideFilter?.includes('attribute')">
         <ng-container *ngFor="let attribute of (attribute$ | async)?.data">
           <div class="accordion-item" ngbAccordionItem [collapsed]="false"
-            *ngIf="attribute.style !== 'image'">
+            *ngIf="attribute.style !== 'image' && attribute.name === 'Size'">
             <h2 class="accordion-header" ngbAccordionHeader>
               <button class="accordion-button" ngbAccordionButton>
                 <span>{{ attribute.name }}</span>
@@ -55,7 +58,11 @@
             </div>
           </div>
         </ng-container>
-      </ng-container> -->
+      </ng-container>
+
+
+
+
       <div class="accordion-item" ngbAccordionItem [collapsed]="false" *ngIf="!hideFilter?.includes('price')">
         <h2 class="accordion-header" ngbAccordionHeader>
           <button class="accordion-button" ngbAccordionButton>
