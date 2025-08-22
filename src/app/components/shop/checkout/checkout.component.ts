@@ -350,6 +350,9 @@ export class CheckoutComponent {
       case 'insider_cashfree':
         this.checkout(value);
         break;
+      case 'sbm_insider':
+        this.checkout(value);
+        break;
       default:
         break;
     }
@@ -948,6 +951,101 @@ export class CheckoutComponent {
     });
   }
 
+  // SBM Insider Payment Integration
+  initiateSBMInsiderPaymentIntent(payment_method: string) {
+    debugger;
+    const uuid = uuidv4();
+    const userData = localStorage.getItem('account');
+    const parsedUserData = JSON.parse(userData || '{}')?.user || {};
+
+    const payload = {
+      uuid,
+      ...parsedUserData,
+      checkout: this.storeData?.order?.checkout
+    };
+
+    // Try different parameter structures that might be expected by SBM Insider backend
+    const paymentData = {
+      uuid: payload.uuid,
+      email: parsedUserData.email,
+      total: this.storeData?.order?.checkout?.total?.total,
+      phone: parsedUserData.phone,
+      name: parsedUserData.name,
+      address: `${parsedUserData.address?.[0]?.city || ''} ${parsedUserData.address?.[0]?.area || ''}`,
+      // Try different parameter names that might be expected
+      payment_method: payment_method,
+      amount: this.storeData?.order?.checkout?.total?.total, // Some gateways expect 'amount' instead of 'total'
+      customer_name: parsedUserData.name, // Some gateways expect 'customer_name' instead of 'name'
+      customer_phone: parsedUserData.phone, // Some gateways expect 'customer_phone' instead of 'phone'
+      customer_email: parsedUserData.email // Some gateways expect 'customer_email' instead of 'email'
+    };
+
+    // Debug logging to see what's being sent
+    console.log('SBM Insider Payment Data:', paymentData);
+    console.log('SBM Insider UUID:', uuid);
+    console.log('SBM Insider Payment Method:', payment_method);
+
+    // Try the original SBM Insider method first
+    this.cartService.initiateSbmInsiderPaymentIntent(paymentData).subscribe({
+      next: (response) => {
+        console.log('SBM Insider Response:', response);
+        this.handleSBMInsiderResponse(response, uuid, payment_method);
+      },
+      error: (err) => {
+        console.log("Original SBM Insider method failed, trying alternative:", err);
+        // If original method fails, try alternative method
+        this.tryAlternativeSBMInsiderMethod(paymentData, uuid, payment_method);
+      }
+    });
+  }
+
+  // Alternative SBM Insider method
+  tryAlternativeSBMInsiderMethod(paymentData: any, uuid: string, payment_method: string) {
+    console.log('Trying alternative SBM Insider method...');
+    this.cartService.initiateSbmInsiderPaymentIntentAlternative(paymentData).subscribe({
+      next: (response) => {
+        console.log('SBM Insider Alternative Response:', response);
+        this.handleSBMInsiderResponse(response, uuid, payment_method);
+      },
+      error: (err) => {
+        console.log("Alternative SBM Insider method also failed:", err);
+        // Both methods failed
+        console.error("All SBM Insider payment methods failed");
+      }
+    });
+  }
+
+  // Handle SBM Insider response
+  handleSBMInsiderResponse(response: any, uuid: string, payment_method: string) {
+    if (response?.R && response?.data) {
+      try {
+        const sbmInsiderData = response.data;
+
+        if (sbmInsiderData?.payment_url) {
+          // Open the payment page in a new tab/window
+          const paymentWindow = window.open(
+            sbmInsiderData.payment_url, 
+            'PaymentWindow', 
+            'width=600,height=700,left=100,top=100,resizable=yes,scrollbars=yes'
+          );
+
+          if (!paymentWindow) {
+            console.error("Popup blocked. Please allow pop-ups for this site.");
+          } else {
+            // Start polling for payment status - use the same method as insider_cashfree
+            let action = new PlaceOrder(this.form.value);
+            this.checkTransactionStatusZyaadaPay(uuid, action.payload, paymentWindow, payment_method);
+          }
+        } else {
+          console.error("Invalid response: Payment link is missing.");
+        }
+      } catch (error) {
+          console.error("Error parsing SBM Insider response:", error);
+      }
+    } else {
+      console.error("Payment initiation failed:", response?.msg);
+    }
+  }
 
   // Fashion with Trends NeoKred Payment Integration
   initiateFashionWithTrendsNeoCredIntent(payment_method: string, uuid: any, order_result: any) {
@@ -1165,6 +1263,9 @@ export class CheckoutComponent {
       }
        if(this.payment_method === 'insider_cashfree') {
         this.initiateInsiderCashFreePaymentIntent(this.payment_method);
+      }
+      if(this.payment_method === 'sbm_insider') {
+        this.initiateSBMInsiderPaymentIntent(this.payment_method);
       }
       if(this.payment_method === 'fashionwithtrends_neokred') {
         this.orderService.placeOrder(action?.payload).pipe(

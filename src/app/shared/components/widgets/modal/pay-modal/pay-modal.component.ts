@@ -51,6 +51,7 @@ export class PayModalComponent {
   }
 
   submit() {
+    debugger;
     this.paymentType.markAllAsTouched();
     if(this.paymentType.valid){
       const data = {

@@ -227,5 +227,84 @@ export class CartService {
         });
     });
   } 
+
+
+  initiateSbmInsiderPaymentIntent(data: any): Observable<any> {
+    return new Observable(observer => {
+      console.log('SBM Insider Cart Service - Sending data:', data);
+      console.log('SBM Insider Cart Service - URL:', `${environment.URL}/yourcoolfashion-initiate-payment-sbminsider`);
+      
+      fetch(`${environment.URL}/yourcoolfashion-initiate-payment-sbminsider`,{
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+        .then(response => {
+          console.log('SBM Insider Cart Service - Response status:', response.status);
+          console.log('SBM Insider Cart Service - Response headers:', response.headers);
+          
+          if (!response.ok) {
+            return response.text().then(text => {
+              console.log('SBM Insider Cart Service - Error response body:', text);
+              throw new Error(`HTTP ${response.status}: ${text}`);
+            });
+          }
+          
+          return response.json();
+        })
+        .then(data => {
+          console.log('SBM Insider Cart Service - Success response:', data);
+          observer.next(data);
+          observer.complete();
+        })
+        .catch(error => {
+          console.error('SBM Insider Cart Service - Error:', error);
+          observer.error(error);
+        });
+    });
+  }
+
+  // Alternative SBM Insider method using the same URL as insider_cashfree
+  initiateSbmInsiderPaymentIntentAlternative(data: any): Observable<any> {
+    return new Observable(observer => {
+      console.log('SBM Insider Alternative - Sending data:', data);
+      console.log('SBM Insider Alternative - URL:', `${environment.URL}/yourcoolfashion-initiate-payment-sbminsider`);
+      
+      fetch(`${environment.URL}/yourcoolfashion-initiate-payment-sbminsider`,{
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          ...data,
+          gateway: 'sbm_insider' // Add gateway identifier
+        })
+      })
+        .then(response => {
+          console.log('SBM Insider Alternative - Response status:', response.status);
+          console.log('SBM Insider Alternative - Response headers:', response.headers);
+          
+          if (!response.ok) {
+            return response.text().then(text => {
+              console.log('SBM Insider Alternative - Error response body:', text);
+              throw new Error(`HTTP ${response.status}: ${text}`);
+            });
+          }
+          
+          return response.json();
+        })
+        .then(data => {
+          console.log('SBM Insider Alternative - Success response:', data);
+          observer.next(data);
+          observer.complete();
+        })
+        .catch(error => {
+          console.error('SBM Insider Alternative - Error:', error);
+          observer.error(error);
+        });
+    });
+  }
 }
 

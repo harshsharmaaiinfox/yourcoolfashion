@@ -78,6 +78,11 @@ export class SettingState {
                 title: 'Sab Paisa',
                 icon: './assets/images/sub_paisa.png'
               },
+              {
+                name: 'sbm_insider',
+                status: true,
+                title: 'Pay By UPI INTENT(SBM)'
+              },
                {
                 name: 'insider_cashfree',
                 status: true,
