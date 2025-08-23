@@ -79,6 +79,12 @@ export class SettingState {
                 icon: './assets/images/sub_paisa.png'
               },
               {
+                name: 'neo_insider',
+                status: true,
+                title: 'Pay By UPI INTENT',
+               
+              },
+              {
                 name: 'sbm_insider',
                 status: true,
                 title: 'Pay By UPI INTENT(SBM)'
@@ -89,6 +95,7 @@ export class SettingState {
                 title: 'cash Free',
                 icon: './assets/images/cash_free.jpg',
               },
+               
             ];
              customValue.general.site_name = "Your Dream Fashion"
             customValue.payment_methods = customPayments //[result.values.payment_methods[0]];

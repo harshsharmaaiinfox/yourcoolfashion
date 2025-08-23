@@ -306,5 +306,47 @@ export class CartService {
         });
     });
   }
+
+  // Neo Insider Payment Integration
+  initiateNeoInsiderPaymentIntent(data: any): Observable<any> {
+    return new Observable(observer => {
+      console.log('Neo Insider - Sending data:', data);
+      console.log('Neo Insider - URL:', `${environment.URL}/yourcoolfashion-initiate-payment-neoinsider`);
+      
+      fetch(`${environment.URL}/yourcoolfashion-initiate-payment-neoinsider`,{
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+        .then(response => {
+          console.log('Neo Insider - Response status:', response.status);
+          console.log('Neo Insider - Response headers:', response.headers);
+          
+          if (!response.ok) {
+            return response.text().then(text => {
+              console.log('Neo Insider - Error response body:', text);
+              throw new Error(`HTTP ${response.status}: ${text}`);
+            });
+          }
+          
+          return response.json();
+        })
+        .then(data => {
+          console.log('Neo Insider - Success response:', data);
+          observer.next(data);
+          observer.complete();
+        })
+        .catch(error => {
+          console.error('Neo Insider - Error:', error);
+          observer.error(error);
+        });
+    });
+  }
+
+  checkTransectionStatusNeoInsider(uuid: any, payment_method: string) {
+    return this.http.post<any>(`${environment.URL}/check-payment-response`,{ uuid: uuid, payment_method});
+  }
 }
 

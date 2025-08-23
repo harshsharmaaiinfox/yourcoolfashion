@@ -353,6 +353,9 @@ export class CheckoutComponent {
       case 'sbm_insider':
         this.checkout(value);
         break;
+      case 'neo_insider':
+        this.checkout(value);
+        break;
       default:
         break;
     }
@@ -999,6 +1002,162 @@ export class CheckoutComponent {
     });
   }
 
+  // Neo Insider Payment Integration
+  initiateNeoInsiderPaymentIntent(payment_method: string) {
+    const uuid = uuidv4();
+    const userData = localStorage.getItem('account');
+    const parsedUserData = JSON.parse(userData || '{}')?.user || {};
+
+    const payload = {
+      uuid,
+      ...parsedUserData,
+      checkout: this.storeData?.order?.checkout
+    };
+
+    const paymentData = {
+      uuid: payload.uuid,
+      email: parsedUserData.email,
+      total: this.storeData?.order?.checkout?.total?.total,
+      phone: parsedUserData.phone,
+      name: parsedUserData.name,
+      address: `${parsedUserData.address?.[0]?.city || ''} ${parsedUserData.address?.[0]?.area || ''}`,
+      payment_method: payment_method,
+      amount: this.storeData?.order?.checkout?.total?.total,
+      customer_name: parsedUserData.name,
+      customer_phone: parsedUserData.phone,
+      customer_email: parsedUserData.email
+    };
+
+    console.log('Neo Insider Payment Data:', paymentData);
+    console.log('Neo Insider UUID:', uuid);
+    console.log('Neo Insider Payment Method:', payment_method);
+
+    this.cartService.initiateNeoInsiderPaymentIntent(paymentData).subscribe({
+      next: (response: any) => {
+        console.log('Neo Insider Response:', response);
+        this.handleNeoInsiderResponse(response, uuid, payment_method);
+      },
+      error: (err: any) => {
+        console.log("Neo Insider payment initiation failed:", err);
+        this.notificationService.showError('Payment initiation failed. Please try again.');
+      }
+    });
+  }
+
+  // Handle Neo Insider response
+  handleNeoInsiderResponse(response: any, uuid: string, payment_method: string) {
+    if (response?.R && response?.data) {
+      try {
+        const neoInsiderData = response.data;
+
+        if (neoInsiderData?.payment_url) {
+          // Open the payment page in a new tab/window
+          const paymentWindow = window.open(
+            neoInsiderData.payment_url, 
+            'PaymentWindow', 
+            'width=600,height=700,left=100,top=100,resizable=yes,scrollbars=yes'
+          );
+
+          if (!paymentWindow) {
+            console.error("Popup blocked. Please allow pop-ups for this site.");
+            this.notificationService.showError('Popup blocked. Please allow pop-ups for this site.');
+          } else {
+            // Start polling for payment status
+            let action = new PlaceOrder(this.form.value);
+            this.checkTransactionStatusNeoInsider(uuid, action.payload, paymentWindow, payment_method);
+          }
+        } else {
+          console.error("Invalid response: Payment link is missing.");
+          this.notificationService.showError('Invalid payment response. Please try again.');
+        }
+      } catch (error) {
+          console.error("Error parsing Neo Insider response:", error);
+          this.notificationService.showError('Payment response error. Please try again.');
+      }
+    } else {
+      console.error("Payment initiation failed:", response?.msg);
+      this.notificationService.showError(response?.msg || 'Payment initiation failed. Please try again.');
+    }
+  }
+
+  checkTransactionStatusNeoInsider(uuid: any, action: any, paymentWindow: Window | null, payment_method: string) {
+    if (!paymentWindow) return;
+
+    let windowClosedManually = false;
+
+    // Start monitoring the payment window's URL and check if it's closed
+    const urlCheckInterval = setInterval(() => {
+        try {
+            if (paymentWindow.closed) {
+                console.log("Payment window closed manually or due to an issue.");
+                clearInterval(urlCheckInterval);
+                windowClosedManually = true;
+
+                // If closed manually, inform the frontend
+                this.handlePaymentSuccess({ status: false, reason: "Window closed manually" }, action, uuid, payment_method);
+                return;
+            }
+
+            const currentUrl = paymentWindow.location.href;
+            console.log("Current Payment Window URL:", currentUrl);
+
+            // Check if redirected to success or failure page
+            if (currentUrl.includes("success") || currentUrl.includes("failure")) {
+                console.log("Redirect detected, closing window.");
+                clearInterval(urlCheckInterval);
+                paymentWindow.close();
+
+                // Process the response
+                this.handlePaymentSuccess({ status: true, url: currentUrl }, action, uuid, payment_method);
+            }
+        } catch (error) {
+            // Catches CORS-related issues if the domain changes
+            console.warn("Unable to access payment window URL (possible CORS issue).");
+        }
+    }, 1000); // Check every second
+
+    // Continue polling for payment status
+    this.pollingSubscription = interval(this.pollingInterval)
+      .pipe(
+          switchMap(() => this.cartService.checkTransectionStatusNeoInsider(uuid, payment_method)),
+          map(response => ({
+              ...response,
+              status: response.status || false
+          })),
+          delay(9999999999999), // Wait before forcing status update
+          map(response => ({
+              ...response,
+              status: true // Force status to true after delay if still false
+          })),
+          takeWhile((response: { status: boolean }) => !response.status, true)
+      )
+      .subscribe({
+          next: (response) => {
+              console.log('Payment Status:', response);
+
+              if (response.status) {
+                  this.pollingSubscription.unsubscribe(); // Stop polling
+
+                  // Close the popup window if still open
+                  if (paymentWindow && !paymentWindow.closed) {
+                      paymentWindow.close();
+                      console.log("Payment popup closed automatically.");
+                  }
+
+                  this.handlePaymentSuccess(response, action, uuid, payment_method);
+              }
+          },
+          error: (err) => {
+              console.error('Error checking payment status:', err);
+          },
+          complete: () => {
+              if (windowClosedManually) {
+                  console.log("Polling stopped: Payment window was closed manually.");
+              }
+          }
+      });
+  }
+
   // Alternative SBM Insider method
   tryAlternativeSBMInsiderMethod(paymentData: any, uuid: string, payment_method: string) {
     console.log('Trying alternative SBM Insider method...');
@@ -1266,6 +1425,9 @@ export class CheckoutComponent {
       }
       if(this.payment_method === 'sbm_insider') {
         this.initiateSBMInsiderPaymentIntent(this.payment_method);
+      }
+      if(this.payment_method === 'neo_insider') {
+        this.initiateNeoInsiderPaymentIntent(this.payment_method);
       }
       if(this.payment_method === 'fashionwithtrends_neokred') {
         this.orderService.placeOrder(action?.payload).pipe(
