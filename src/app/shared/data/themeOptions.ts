@@ -100,7 +100,7 @@ export const themeOptionsYourDreamFashion = {
             "copyright_content": "Copyright 2025 © Your Cool Fashion ",
             "footer_about": null,
             "about_address": "Office No 253 PLOT NO 11, 2ND FLOOR, VARDHAMAN MARKET PLAZA PITAMPURA, Rani Bagh, Delhi, 110034",
-            "about_email": " magainside2025@gmail.com ",
+            "about_email": " contact@yourcoolfashion.com ",
             "footer_categories": [],
             "useful_link": [
                 {
@@ -132,7 +132,7 @@ export const themeOptionsYourDreamFashion = {
                 }
             ],
             "support_number": "+91 8950479931",
-            "support_email": " magainside2025@gmail.com ",
+            "support_email": " contact@yourcoolfashion.com ",
             "play_store_url": null,
             "app_store_url": null,
             "social_media_enable": true,
