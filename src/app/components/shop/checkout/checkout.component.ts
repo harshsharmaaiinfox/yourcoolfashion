@@ -113,13 +113,13 @@ export class CheckoutComponent {
       name: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z\s]+$/)]),
       email: new FormControl('', [Validators.required, Validators.email]),
       country_code: new FormControl('91', [Validators.required]),
-      phone: new FormControl('', [Validators.required]),
+      phone: new FormControl('', [Validators.required, Validators.pattern(/^[0-9]*$/)]),
       password: new FormControl(),
       shipping_address: new FormGroup({
         title: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z\s]+$/)]),
         street: new FormControl('', [Validators.required]),
         city: new FormControl('', [Validators.required]),
-        phone: new FormControl('', [Validators.required]),
+        phone: new FormControl('', [Validators.required, Validators.pattern(/^[0-9]*$/)]),
         pincode: new FormControl('', [Validators.required]),
         country_code: new FormControl('91', [Validators.required]),
         country_id: new FormControl('', [Validators.required]),
@@ -130,7 +130,7 @@ export class CheckoutComponent {
         title: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z\s]+$/)]),
         street: new FormControl('', [Validators.required]),
         city: new FormControl('', [Validators.required]),
-        phone: new FormControl('', [Validators.required]),
+        phone: new FormControl('', [Validators.required, Validators.pattern(/^[0-9]*$/)]),
         pincode: new FormControl('', [Validators.required]),
         country_code: new FormControl('91', [Validators.required]),
         country_id: new FormControl('', [Validators.required]),
@@ -278,6 +278,27 @@ export class CheckoutComponent {
     if (value !== cleanValue) {
       input.value = cleanValue;
       this.form.get('billing_address.title')?.setValue(cleanValue);
+    }
+  }
+
+  onPhoneInput(event: any) {
+    const input = event.target;
+    const value = input.value;
+    // Remove any non-numeric characters
+    const cleanValue = value.replace(/[^0-9]/g, '');
+    
+    // Update the input value if it was changed
+    if (value !== cleanValue) {
+      input.value = cleanValue;
+      // Update the appropriate form control based on the input name
+      const inputName = input.name;
+      if (inputName === 'phone') {
+        this.form.controls['phone'].setValue(cleanValue);
+      } else if (inputName === 'shipping_phone') {
+        this.form.get('shipping_address.phone')?.setValue(cleanValue);
+      } else if (inputName === 'billing_phone') {
+        this.form.get('billing_address.phone')?.setValue(cleanValue);
+      }
     }
   }
 
