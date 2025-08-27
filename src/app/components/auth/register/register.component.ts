@@ -93,6 +93,19 @@ export class RegisterComponent {
     }
   }
 
+  onPhoneInput(event: any) {
+    const input = event.target;
+    const value = input.value;
+    // Remove any non-numeric characters
+    const cleanValue = value.replace(/[^0-9]/g, '');
+    
+    // Update the input value if it was changed
+    if (value !== cleanValue) {
+      input.value = cleanValue;
+      this.form.controls['phone'].setValue(cleanValue);
+    }
+  }
+
   get passwordMatchError() {
     return (
       this.form.getError('mismatch') &&
