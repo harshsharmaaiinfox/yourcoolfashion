@@ -97,7 +97,7 @@ export class SettingState {
               },
                
             ];
-             customValue.general.site_name = "Your Dream Fashion"
+             customValue.general.site_name = "Your Cool Fashion"
             customValue.payment_methods = customPayments //[result.values.payment_methods[0]];
           }
           ctx.patchState({

@@ -63,14 +63,17 @@ export class RegisterComponent {
 
     this.form.get('country_code')?.disable();
     this.form.controls['phone']?.valueChanges.subscribe((value) => {
-      if(value && value.toString().length < 10) {
+      let phoneStr = value ? value.toString().replace(/[^0-9]/g, '') : '';
+      // Always keep max 10 digits
+      if (phoneStr.length > 10) {
+        phoneStr = phoneStr.slice(0, 10);
+        this.form.controls['phone'].setValue(phoneStr, { emitEvent: false });
+      }
+      // Set error if not exactly 10 digits
+      if (phoneStr.length !== 10) {
         this.form.controls['phone'].markAsTouched();
-        this.form.controls['phone'].setErrors({invalid: true});
-      }
-      if(value && value.toString().length > 10) {
-        this.form.controls['phone']?.setValue(+value.toString().slice(0, 10), { emitEvent: false });
-      }
-      if(value && value.toString().length === 10) {
+        this.form.controls['phone'].setErrors({ invalid: true });
+      } else {
         this.form.controls['phone'].setErrors(null);
       }
     });
