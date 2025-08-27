@@ -69,18 +69,26 @@ export class AddressModalComponent {
     })
 
     this.form.controls['phone']?.valueChanges.subscribe((value) => {
-      let phoneStr = value ? value.toString().replace(/[^0-9]/g, '') : '';
-      // Always keep max 10 digits
-      if (phoneStr.length > 10) {
-        phoneStr = phoneStr.slice(0, 10);
-        this.form.controls['phone'].setValue(phoneStr, { emitEvent: false });
-      }
-      // Set error if not exactly 10 digits
-      if (phoneStr.length !== 10) {
-        this.form.controls['phone'].markAsTouched();
-        this.form.controls['phone'].setErrors({ invalid: true });
-      } else {
-        this.form.controls['phone'].setErrors(null);
+      if (value) {
+        // Remove any non-numeric characters
+        let phoneStr = value.toString().replace(/[^0-9]/g, '');
+        
+        // Limit to 10 digits for Indian phone numbers
+        if (phoneStr.length > 10) {
+          phoneStr = phoneStr.slice(0, 10);
+        }
+        
+        // Only update if the value actually changed (to avoid infinite loops)
+        if (phoneStr !== value.toString()) {
+          this.form.controls['phone'].setValue(phoneStr, { emitEvent: false });
+        }
+        
+        // Set validation error if not exactly 10 digits
+        if (phoneStr.length !== 10) {
+          this.form.controls['phone'].setErrors({ invalid: true });
+        } else {
+          this.form.controls['phone'].setErrors(null);
+        }
       }
     });
 
@@ -292,6 +300,19 @@ export class AddressModalComponent {
     if (value !== cleanValue) {
       input.value = cleanValue;
       this.form.controls['title'].setValue(cleanValue);
+    }
+  }
+
+  onPhoneInput(event: any) {
+    const input = event.target;
+    const value = input.value;
+    // Remove any non-numeric characters
+    const cleanValue = value.replace(/[^0-9]/g, '');
+    
+    // Update the input value if it was changed
+    if (value !== cleanValue) {
+      input.value = cleanValue;
+      this.form.controls['phone'].setValue(cleanValue);
     }
   }
 

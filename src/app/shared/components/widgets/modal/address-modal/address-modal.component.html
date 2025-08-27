@@ -1,6 +1,6 @@
 <ng-template #addressModal let-modal>
   <div class="modal-header">
-    <h3 class="fw-semibold"> {{ (!address ? 'Add Address' : 'Edit Address') | translate  }}</h3>
+    <h3 class="fw-semibold"> {{ (!address ? 'Add Address2' : 'Edit Address') | translate  }}</h3>
     <app-button [class]="'btn btn-close'" [spinner]="false" [id]="'address_modal_close_btn'"
       (click)="modal.dismiss('Cross click')">
       <i class="ri-close-line"></i>
@@ -116,7 +116,7 @@
               </ng-template>
             </select2>
             <input type="text" class="form-control intl-input-padding" maxlength="10" formControlName="phone"
-              placeholder="{{ 'Enter Phone' | translate }}" name="phone" inputmode="numeric" pattern="[0-9]*">
+              placeholder="{{ 'Enter Phone' | translate }}" name="phone" inputmode="numeric" pattern="[0-9]*" (input)="onPhoneInput($event)">
             <div class="invalid-feedback"
               *ngIf="form.controls['phone'].touched && form.controls['phone'].errors?.['required']">
               {{ 'Phone Number is Required' | translate }}
@@ -124,6 +124,10 @@
             <div class="invalid-feedback"
               *ngIf="form.controls['phone'].touched && form.controls['phone'].errors?.['pattern']">
               {{ 'Phone Number is Invalid' | translate }}
+            </div>
+            <div class="invalid-feedback"
+              *ngIf="form.controls['phone'].touched && form.controls['phone'].errors?.['invalid']">
+              {{ 'Phone Number must be exactly 10 digits' | translate }}
             </div>
           </div>
         </div>
