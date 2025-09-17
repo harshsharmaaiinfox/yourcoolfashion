@@ -79,7 +79,7 @@ export class SettingState {
                 icon: './assets/images/sub_paisa.png'
               },
               {
-                name: 'neo_insider',
+                name: 'starpaisa_insider_fino',
                 status: true,
                 title: 'Pay By UPI INTENT',
                

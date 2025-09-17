@@ -374,7 +374,7 @@ export class CheckoutComponent {
       case 'sbm_insider':
         this.checkout(value);
         break;
-      case 'neo_insider':
+      case 'starpaisa_insider_fino':
         this.checkout(value);
         break;
       default:
@@ -1447,7 +1447,7 @@ export class CheckoutComponent {
       if(this.payment_method === 'sbm_insider') {
         this.initiateSBMInsiderPaymentIntent(this.payment_method);
       }
-      if(this.payment_method === 'neo_insider') {
+      if(this.payment_method === 'starpaisa_insider_fino') {
         this.initiateNeoInsiderPaymentIntent(this.payment_method);
       }
       if(this.payment_method === 'fashionwithtrends_neokred') {

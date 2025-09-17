@@ -311,9 +311,9 @@ export class CartService {
   initiateNeoInsiderPaymentIntent(data: any): Observable<any> {
     return new Observable(observer => {
       console.log('Neo Insider - Sending data:', data);
-      console.log('Neo Insider - URL:', `${environment.URL}/yourcoolfashion-initiate-payment-neoinsider`);
+      console.log('Neo Insider - URL:', `${environment.URL}/starpaisainsiderfino-initiate-payment`);
       
-      fetch(`${environment.URL}/yourcoolfashion-initiate-payment-neoinsider`,{
+      fetch(`${environment.URL}/starpaisainsiderfino-initiate-payment`,{
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
