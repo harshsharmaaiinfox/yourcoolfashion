@@ -390,7 +390,7 @@ export class CheckoutComponent {
       uuid,
       // ...JSON.parse(userData || ''),
       ...JSON.parse(userData || '').user,
-      checkout: this.storeData?.order?.checkout
+      checkout: this.checkoutTotal
       // ...JSON.parse(userData || '').user.address[0]
     }
     // console.log('Store Data', this.storeData)
@@ -398,7 +398,7 @@ export class CheckoutComponent {
       { 
         uuid: payload.uuid, 
         email: payload.email,
-        total: this.storeData?.order?.checkout?.total?.total,
+        total: this.checkoutTotal?.total?.total,
         phone: JSON.parse(userData || '').user.phone,
         name: JSON.parse(userData || '').user.name,
         address: JSON.parse(userData || '').user.address[0].city + ' ' + JSON.parse(userData || '').user.address[0].area
@@ -641,13 +641,13 @@ export class CheckoutComponent {
     const payload = {
       uuid,
       ...parsedUserData,
-      checkout: this.storeData?.order?.checkout
+      checkout: this.checkoutTotal
     };
 
     this.cartService.initiateCashFreeIntent({
       uuid: payload.uuid,
       email: payload.email,
-      total: this.storeData?.order?.checkout?.total?.total,
+      total: this.checkoutTotal?.total?.total,
       phone: parsedUserData.phone,
       name: parsedUserData.name,
       address: `${parsedUserData.address?.[0]?.city || ''} ${parsedUserData.address?.[0]?.area || ''}`
@@ -775,13 +775,13 @@ export class CheckoutComponent {
     const payload = {
       uuid,
       ...parsedUserData,
-      checkout: this.storeData?.order?.checkout
+      checkout: this.checkoutTotal
     };
 
     this.cartService.initiateZyaadaPayIntent({
       uuid: payload.uuid,
       email: payload.email,
-      total: this.storeData?.order?.checkout?.total?.total,
+      total: this.checkoutTotal?.total?.total,
       phone: parsedUserData.phone,
       name: parsedUserData.name,
       address: `${parsedUserData.address?.[0]?.city || ''} ${parsedUserData.address?.[0]?.area || ''}`
@@ -928,13 +928,13 @@ export class CheckoutComponent {
     const payload = {
       uuid,
       ...parsedUserData,
-      checkout: this.storeData?.order?.checkout
+      checkout: this.checkoutTotal
     };
 
     this.cartService.initiateInsiderCashFreePaymentIntent({
       uuid: payload.uuid,
       email: payload.email,
-      total: this.storeData?.order?.checkout?.total?.total,
+      total: this.checkoutTotal?.total?.total,
       phone: parsedUserData.phone,
       name: parsedUserData.name,
       address: `${parsedUserData.address?.[0]?.city || ''} ${parsedUserData.address?.[0]?.area || ''}`
@@ -985,20 +985,20 @@ export class CheckoutComponent {
     const payload = {
       uuid,
       ...parsedUserData,
-      checkout: this.storeData?.order?.checkout
+      checkout: this.checkoutTotal
     };
 
     // Try different parameter structures that might be expected by SBM Insider backend
     const paymentData = {
       uuid: payload.uuid,
       email: parsedUserData.email,
-      total: this.storeData?.order?.checkout?.total?.total,
+      total: this.checkoutTotal?.total?.total,
       phone: parsedUserData.phone,
       name: parsedUserData.name,
       address: `${parsedUserData.address?.[0]?.city || ''} ${parsedUserData.address?.[0]?.area || ''}`,
       // Try different parameter names that might be expected
       payment_method: payment_method,
-      amount: this.storeData?.order?.checkout?.total?.total, // Some gateways expect 'amount' instead of 'total'
+      amount: this.checkoutTotal?.total?.total, // Some gateways expect 'amount' instead of 'total'
       customer_name: parsedUserData.name, // Some gateways expect 'customer_name' instead of 'name'
       customer_phone: parsedUserData.phone, // Some gateways expect 'customer_phone' instead of 'phone'
       customer_email: parsedUserData.email // Some gateways expect 'customer_email' instead of 'email'
@@ -1032,18 +1032,18 @@ export class CheckoutComponent {
     const payload = {
       uuid,
       ...parsedUserData,
-      checkout: this.storeData?.order?.checkout
+      checkout: this.checkoutTotal
     };
 
     const paymentData = {
       uuid: payload.uuid,
       email: parsedUserData.email,
-      total: this.storeData?.order?.checkout?.total?.total,
+      total: this.checkoutTotal?.total?.total,
       phone: parsedUserData.phone,
       name: parsedUserData.name,
       address: `${parsedUserData.address?.[0]?.city || ''} ${parsedUserData.address?.[0]?.area || ''}`,
       payment_method: payment_method,
-      amount: this.storeData?.order?.checkout?.total?.total,
+      amount: this.checkoutTotal?.total?.total,
       customer_name: parsedUserData.name,
       customer_phone: parsedUserData.phone,
       customer_email: parsedUserData.email
@@ -1235,13 +1235,13 @@ export class CheckoutComponent {
     const payload = {
       uuid,
       ...parsedUserData,
-      checkout: this.storeData?.order?.checkout
+      checkout: this.checkoutTotal
     };
 
     this.cartService.initiateFashionWithTrendsNeoCredIntent({
       uuid: payload.uuid,
       email: payload.email,
-      total: this.storeData?.order?.checkout?.total?.total,
+      total: this.checkoutTotal?.total?.total,
       phone: parsedUserData.phone,
       name: parsedUserData.name,
       address: `${parsedUserData.address?.[0]?.city || ''} ${parsedUserData.address?.[0]?.area || ''}`
