@@ -1,11 +1,22 @@
 <div>
 
-    <!-- Stylexio Banner Start -->
+    <!-- Hero Slider Start -->
 <section class="pt-5 pb-3">
   <div class="container-fluid-lg">
-    <a href="/collections?sortBy=asc">
-    <img src="assets/images/diwali-update.png" alt="Stylexio promotional banner" class="img-fluid w-100" loading="lazy">
-    </a>
+    <div class="hero-slider-wrapper">
+      <owl-carousel-o [options]="heroSlider">
+        <ng-template carouselSlide>
+          <a href="/collections?sortBy=asc">
+            <img src="assets/images/yourcool1.png" alt="Your Cool Fashion Banner 1" class="img-fluid w-100" loading="lazy">
+          </a>
+        </ng-template>
+        <ng-template carouselSlide>
+          <a href="/collections?sortBy=asc">
+            <img src="assets/images/yourcool2.png" alt="Your Cool Fashion Banner 2" class="img-fluid w-100" loading="lazy">
+          </a>
+        </ng-template>
+      </owl-carousel-o>
+    </div>
   </div>
 </section>
 

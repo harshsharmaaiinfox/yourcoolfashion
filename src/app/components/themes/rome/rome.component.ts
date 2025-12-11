@@ -32,6 +32,7 @@ export class RomeComponent {
   public categorySlider = data.categorySlider9;
   public productSlider6ItemMargin = data.productSlider6ItemMargin;
   public customOptionsItem4 = data.customOptionsItem4;
+  public heroSlider = data.heroSlider;
   public productFilterIds: number[] = []; 
   public selectedCategoryId: number;
   public showProductBox: number = 6;

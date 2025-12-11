@@ -352,3 +352,28 @@ export const productSliderLayout: OwlOptions = {
     },
   },
 };
+
+// Hero Slider (Auto slide with dots, no nav buttons)
+export const heroSlider: OwlOptions = {
+  loop: true,
+  nav: false,
+  dots: true,
+  items: 1,
+  margin: 0,
+  stagePadding: 0,
+  autoplay: true,
+  autoplayTimeout: 5000,
+  autoplayHoverPause: true,
+  autoplaySpeed: 1000,
+  smartSpeed: 1000,
+  pullDrag: false,
+  mouseDrag: false,
+  touchDrag: true,
+  responsive: {
+    0: {
+      items: 1,
+      margin: 0,
+      stagePadding: 0,
+    },
+  },
+};
