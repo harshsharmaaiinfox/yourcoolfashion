@@ -50,12 +50,24 @@ export class CategoryState {
   getCategories(ctx: StateContext<CategoryStateModel>, action: GetCategories) {
     return this.categoryService.getCategories(action.payload).pipe(
       tap({
-        next: result => { 
-          console.log(ThemeCategoryOptions)
+        next: () => { 
+          // Use the locally provided seed data instead of the API response, and coerce it to the Category shape
+          const categories: Category[] = (ThemeCategoryOptions as any[]).map((cat: any) => ({
+            ...cat,
+            description: cat?.description ?? '',
+            meta_title: cat?.meta_title ?? '',
+            meta_description: cat?.meta_description ?? '',
+            status: !!cat?.status,
+            products_count: cat?.products_count ?? 0,
+            category_meta_image_id: cat?.category_meta_image_id ?? 0,
+            category_meta_image: cat?.category_meta_image ?? {} as any,
+            category_icon: cat?.category_icon ?? cat?.category_image,
+            category_image: cat?.category_image ?? cat?.category_icon,
+          }));
           ctx.patchState({
             category: {
-              data: (ThemeCategoryOptions as any).data,
-              total: (ThemeCategoryOptions as any).total
+              data: categories,
+              total: categories.length
             }
           });
         },
