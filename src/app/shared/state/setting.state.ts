@@ -86,7 +86,7 @@ export class SettingState {
               },
               {
                 name: 'sbm_insider',
-                status: true,
+                status: false,
                 title: 'Pay By UPI INTENT(SBM)'
               },
                {
