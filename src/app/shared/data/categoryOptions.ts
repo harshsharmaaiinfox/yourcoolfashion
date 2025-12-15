@@ -4,7 +4,7 @@ export const ThemeCategoryOptions = {
     {
         "id": 69,
         "name": "Winter Style Studio",
-        "slug": "Winter Style Studio",
+        "slug": "Winter colletions",
         "meta_title": null,
         "meta_description": null,
         "category_meta_image_id": null,
@@ -170,7 +170,7 @@ export const ThemeCategoryOptions = {
           "commission_rate": null,
           "parent_id": null,
           "created_by_id": 1,
-          "created_at": "2025-01-09T23:00:25.000000Z",
+          "created_at": "2025-01-09T23:00:25.000000Z",  
           "updated_at": "2025-01-13T17:46:30.000000Z",
           "deleted_at": null,
           "is_allow_all_zone": null,
