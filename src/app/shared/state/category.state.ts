@@ -52,7 +52,7 @@ export class CategoryState {
       tap({
         next: () => { 
           // Use the locally provided seed data instead of the API response, and coerce it to the Category shape
-          const categories: Category[] = (ThemeCategoryOptions as any[]).map((cat: any) => ({
+          const categories: Category[] = (ThemeCategoryOptions?.data ?? []).map((cat: any) => ({
             ...cat,
             description: cat?.description ?? '',
             meta_title: cat?.meta_title ?? '',
