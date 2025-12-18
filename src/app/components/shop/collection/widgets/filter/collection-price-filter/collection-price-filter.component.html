@@ -1,18 +1,35 @@
-
-<ul class="category-list custom-padding custom-height">
-    <li *ngFor="let price of prices">
-        <div class="form-check ps-0 m-0 category-list-box">
-            <input class="checkbox_animated" type="checkbox" 
-                id="price-filter{{price?.id}}"
-                [value]="price?.value"
-                [checked]="checked(price?.value!)"
-                (change)="applyFilter($event)">
-            <label class="form-check-label" for="price-filter{{price?.id}}">
-                <span class="name" *ngIf="price?.price else minMaxPrice">{{ price?.text }} {{ price?.price | currencySymbol }}</span>
-                <ng-template #minMaxPrice>
-                    <span class="name">{{ price?.minPrice | currencySymbol }} - {{ price?.maxPrice | currencySymbol }}</span>
-                </ng-template>
-            </label>
-        </div>
-    </li>
-</ul>
+<div class="price-range-filter">
+  <div class="price-range-slider">
+    <div class="slider-container">
+      <div class="slider-track">
+        <div class="slider-fill" 
+             [style.left.%]="((minValue - minPrice) / (maxPrice - minPrice)) * 100" 
+             [style.width.%]="((maxValue - minValue) / (maxPrice - minPrice)) * 100"></div>
+      </div>
+      <input type="range" 
+             class="slider-input slider-input-min" 
+             [min]="minPrice" 
+             [max]="maxPrice" 
+             [value]="minValue"
+             (input)="onMinChange($event)"
+             (change)="onMinChange($event)">
+      <input type="range" 
+             class="slider-input slider-input-max" 
+             [min]="minPrice" 
+             [max]="maxPrice" 
+             [value]="maxValue"
+             (input)="onMaxChange($event)"
+             (change)="onMaxChange($event)">
+    </div>
+    <div class="price-labels">
+      <div class="price-label price-label-min" 
+           [style.left.%]="((minValue - minPrice) / (maxPrice - minPrice)) * 100">
+        <span class="price-value">{{ minValue | currencySymbol }}</span>
+      </div>
+      <div class="price-label price-label-max" 
+           [style.left.%]="((maxValue - minPrice) / (maxPrice - minPrice)) * 100">
+        <span class="price-value">{{ maxValue | currencySymbol }}</span>
+      </div>
+    </div>
+  </div>
+</div>
