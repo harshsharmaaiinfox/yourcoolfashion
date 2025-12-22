@@ -12,9 +12,9 @@ export class CollectionPriceFilterComponent implements OnChanges {
   @Input() filter: Params;
 
   public minPrice: number = 0;
-  public maxPrice: number = 15000;
+  public maxPrice: number = 10000;
   public minValue: number = 0;
-  public maxValue: number = 15000; // Default max value, adjust based on your needs
+  public maxValue: number = 10000; // Default max value, adjust based on your needs
 
   constructor(private route: ActivatedRoute,
     private router: Router) {
@@ -26,14 +26,14 @@ export class CollectionPriceFilterComponent implements OnChanges {
     } else {
       // Initialize with default values for slider
       this.minPrice = this.minValue;
-      this.maxPrice = 15000; // Default max for display
+      this.maxPrice = 10000; // Default max for display
     }
   }
 
   parsePriceFromFilter(priceParam: string) {
     if (!priceParam) {
       this.minPrice = this.minValue;
-      this.maxPrice = 15000;
+      this.maxPrice = 10000;
       return;
     }
 
@@ -41,17 +41,17 @@ export class CollectionPriceFilterComponent implements OnChanges {
     const priceValues = priceParam.split(',');
     const firstPrice = priceValues[0];
 
-    // Handle different formats: "200-400", "15000", etc.
+    // Handle different formats: "200-400", "10000", etc.
     if (firstPrice.includes('-')) {
       const [min, max] = firstPrice.split('-').map(val => parseFloat(val.trim()));
       this.minPrice = !isNaN(min) ? min : this.minValue;
-      this.maxPrice = !isNaN(max) ? max : 15000;
+      this.maxPrice = !isNaN(max) ? max : 10000;
     } else {
       // Single value - treat as minimum price
       const value = parseFloat(firstPrice);
       if (!isNaN(value)) {
         this.minPrice = value;
-        this.maxPrice = 15000;
+        this.maxPrice = 10000;
       }
     }
   }
@@ -129,7 +129,7 @@ export class CollectionPriceFilterComponent implements OnChanges {
     let priceValue: string | null = null;
 
     // Always use range format - apply if not at default values
-    const defaultMax = 15000;
+    const defaultMax = 10000;
     if (this.minPrice !== this.minValue || this.maxPrice !== defaultMax) {
       priceValue = `${this.minPrice}-${this.maxPrice}`;
     }
@@ -147,7 +147,7 @@ export class CollectionPriceFilterComponent implements OnChanges {
 
   clearFilter() {
     this.minPrice = this.minValue;
-    this.maxPrice = 15000;
+    this.maxPrice = 10000;
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: {
@@ -160,7 +160,7 @@ export class CollectionPriceFilterComponent implements OnChanges {
   }
 
   isFilterActive(): boolean {
-    return this.minPrice !== this.minValue || this.maxPrice !== 15000;
+    return this.minPrice !== this.minValue || this.maxPrice !== 10000;
   }
 
   getSliderMinPercentage(): number {
