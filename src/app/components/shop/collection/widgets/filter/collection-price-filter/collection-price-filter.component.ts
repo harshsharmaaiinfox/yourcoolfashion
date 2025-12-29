@@ -1,10 +1,7 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Store } from '@ngxs/store';
 import { Params } from '../../../../../../shared/interface/core.interface';
-import { ProductModel, Product } from '../../../../../../shared/interface/product.interface';
-import { ProductState } from '../../../../../../shared/state/product.state';
 
 @Component({
   selector: 'app-collection-price-filter',
@@ -15,59 +12,17 @@ export class CollectionPriceFilterComponent implements OnChanges {
 
   @Input() filter: Params;
 
-  @Select(ProductState.product) product$: Observable<ProductModel>;
-
   public minPrice: number = 0;
-  public maxPrice: number = 10000;
+  public maxPrice: number = 15000;
   public minValue: number = 0;
-  public maxValue: number = 10000; // Default max value, adjust based on your needs
-  private currentMaxPrice: number = 10000;
+  public maxValue: number = 15000;
+  private currentMaxPrice: number = 15000;
 
   constructor(private route: ActivatedRoute,
     private router: Router,
     private store: Store) {
-    // Subscribe to product changes to update max price dynamically
-    this.product$.subscribe(products => {
-      this.updateMaxPriceFromProducts(products);
-    });
   }
 
-  private updateMaxPriceFromProducts(productModel: ProductModel) {
-    if (!productModel?.data?.length) {
-      this.currentMaxPrice = 10000;
-      this.maxValue = 10000;
-      this.maxPrice = Math.min(this.maxPrice, this.currentMaxPrice);
-      return;
-    }
-
-    // Filter products by current category if specified
-    let filteredProducts = productModel.data;
-    if (this.filter?.['category']) {
-      const categorySlug = this.filter['category'];
-      filteredProducts = productModel.data.filter(product =>
-        product.categories?.some(cat => cat.slug === categorySlug) ||
-        product.category?.slug === categorySlug
-      );
-    }
-
-    if (filteredProducts.length > 0) {
-      // Find the maximum price among the products
-      this.currentMaxPrice = Math.max(...filteredProducts.map(product => product.price));
-      // Round up to nearest 100 for better UX
-      this.currentMaxPrice = Math.ceil(this.currentMaxPrice / 100) * 100;
-    } else {
-      this.currentMaxPrice = 10000;
-    }
-
-    // Update max values
-    this.maxValue = this.currentMaxPrice;
-    this.maxPrice = Math.min(this.maxPrice, this.currentMaxPrice);
-
-    // Ensure min price doesn't exceed new max
-    if (this.minPrice > this.maxPrice) {
-      this.minPrice = this.maxPrice;
-    }
-  }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['filter'] && this.filter?.['price']) {
@@ -75,21 +30,14 @@ export class CollectionPriceFilterComponent implements OnChanges {
     } else {
       // Initialize with default values for slider
       this.minPrice = this.minValue;
-      this.maxPrice = this.currentMaxPrice; // Use dynamic max for display
-    }
-
-    // Update max price when filter changes (category might have changed)
-    if (changes['filter']) {
-      this.product$.subscribe(products => {
-        this.updateMaxPriceFromProducts(products);
-      }).unsubscribe(); // Unsubscribe immediately as we only need the current value
+      this.maxPrice = this.maxValue;
     }
   }
 
   parsePriceFromFilter(priceParam: string) {
     if (!priceParam) {
       this.minPrice = this.minValue;
-      this.maxPrice = this.currentMaxPrice;
+      this.maxPrice = this.maxValue;
       return;
     }
 
@@ -101,13 +49,13 @@ export class CollectionPriceFilterComponent implements OnChanges {
     if (firstPrice.includes('-')) {
       const [min, max] = firstPrice.split('-').map(val => parseFloat(val.trim()));
       this.minPrice = !isNaN(min) ? min : this.minValue;
-      this.maxPrice = !isNaN(max) ? max : this.currentMaxPrice;
+      this.maxPrice = !isNaN(max) ? max : this.maxValue;
     } else {
       // Single value - treat as minimum price
       const value = parseFloat(firstPrice);
       if (!isNaN(value)) {
         this.minPrice = value;
-        this.maxPrice = this.currentMaxPrice;
+        this.maxPrice = this.maxValue;
       }
     }
   }
@@ -185,7 +133,7 @@ export class CollectionPriceFilterComponent implements OnChanges {
     let priceValue: string | null = null;
 
     // Always use range format - apply if not at default values
-    if (this.minPrice !== this.minValue || this.maxPrice !== this.currentMaxPrice) {
+    if (this.minPrice !== this.minValue || this.maxPrice !== this.maxValue) {
       priceValue = `${this.minPrice}-${this.maxPrice}`;
     }
 
@@ -202,7 +150,7 @@ export class CollectionPriceFilterComponent implements OnChanges {
 
   clearFilter() {
     this.minPrice = this.minValue;
-    this.maxPrice = this.currentMaxPrice;
+    this.maxPrice = this.maxValue;
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: {
@@ -215,7 +163,7 @@ export class CollectionPriceFilterComponent implements OnChanges {
   }
 
   isFilterActive(): boolean {
-    return this.minPrice !== this.minValue || this.maxPrice !== this.currentMaxPrice;
+    return this.minPrice !== this.minValue || this.maxPrice !== this.maxValue;
   }
 
   getSliderMinPercentage(): number {
