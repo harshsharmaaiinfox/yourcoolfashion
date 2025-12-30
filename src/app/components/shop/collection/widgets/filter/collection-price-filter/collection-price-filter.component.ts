@@ -137,28 +137,45 @@ export class CollectionPriceFilterComponent implements OnChanges {
       priceValue = `${this.minPrice}-${this.maxPrice}`;
     }
 
+    // Save current scroll position
+    const scrollX = window.scrollX;
+    const scrollY = window.scrollY;
+
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: {
         price: priceValue,
         page: 1
       },
-      queryParamsHandling: 'merge',
-      skipLocationChange: false
+      queryParamsHandling: 'merge'
+    }).then(() => {
+      // Restore scroll position after navigation
+      setTimeout(() => {
+        window.scrollTo(scrollX, scrollY);
+      }, 0);
     });
   }
 
   clearFilter() {
     this.minPrice = this.minValue;
     this.maxPrice = this.maxValue;
+
+    // Save current scroll position
+    const scrollX = window.scrollX;
+    const scrollY = window.scrollY;
+
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: {
         price: null,
         page: 1
       },
-      queryParamsHandling: 'merge',
-      skipLocationChange: false
+      queryParamsHandling: 'merge'
+    }).then(() => {
+      // Restore scroll position after navigation
+      setTimeout(() => {
+        window.scrollTo(scrollX, scrollY);
+      }, 0);
     });
   }
 
