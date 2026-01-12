@@ -12,9 +12,9 @@ export class CollectionPriceFilterComponent implements OnChanges {
 
   @Input() filter: Params;
 
-  public minPrice: number = 0;
+  public minPrice: number = 300;
   public maxPrice: number = 15000;
-  public minValue: number = 0;
+  public minValue: number = 300;
   public maxValue: number = 15000;
   private currentMaxPrice: number = 15000;
 
