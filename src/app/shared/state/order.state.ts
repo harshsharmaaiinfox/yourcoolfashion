@@ -33,7 +33,7 @@ export class OrderState {
 
   constructor(private notificationService: NotificationService,
     private router: Router,
-    private orderService: OrderService) {}
+    private orderService: OrderService) { }
 
   @Selector()
   static order(state: OrderStateModel) {
@@ -114,11 +114,11 @@ export class OrderState {
     return this.orderService.placeOrder(action?.payload).pipe(
       tap({
         next: result => {
-         if((action.payload.payment_method == 'cod' || action.payload.payment_method == 'cash_free' || action.payload.payment_method == 'sub_paisa' || action.payload.payment_method == 'zyaada_pay' || action.payload.payment_method == 'bank_transfer' || action.payload.payment_method == 'fashionwithtrends_neokred' || action.payload.payment_method == 'insider_cashfree' || action.payload.payment_method == 'sbm_insider' || action.payload.payment_method == 'starpaisa_insider_fino') && !result.is_guest)  {
+          if ((action.payload.payment_method == 'cod' || action.payload.payment_method == 'cash_free' || action.payload.payment_method == 'sub_paisa' || action.payload.payment_method == 'zyaada_pay' || action.payload.payment_method == 'bank_transfer' || action.payload.payment_method == 'fashionwithtrends_neokred' || action.payload.payment_method == 'insider_cashfree' || action.payload.payment_method == 'sbm_insider' || action.payload.payment_method == 'starpaisa_insider_fino' || action.payload.payment_method == 'insider_paywize') && !result.is_guest) {
             this.router.navigateByUrl(`/account/order/details/${result.order_number}`);
             setTimeout(() => { window.location.reload() }, 1000);
-          } else if((action.payload.payment_method == 'cod' || action.payload.payment_method == 'cash_free' || action.payload.payment_method == 'sub_paisa' || action.payload.payment_method == 'zyaada_pay' || action.payload.payment_method == 'bank_transfer' || action.payload.payment_method == 'fashionwithtrends_neokred'|| action.payload.payment_method == 'insider_cashfree' || action.payload.payment_method == 'sbm_insider' || action.payload.payment_method == 'starpaisa_insider_fino') && result.is_guest) {
-            this.router.navigate([ 'order/details' ], { queryParams: { order_number: result.order_number, email_or_phone: action?.payload.email } });
+          } else if ((action.payload.payment_method == 'cod' || action.payload.payment_method == 'cash_free' || action.payload.payment_method == 'sub_paisa' || action.payload.payment_method == 'zyaada_pay' || action.payload.payment_method == 'bank_transfer' || action.payload.payment_method == 'fashionwithtrends_neokred' || action.payload.payment_method == 'insider_cashfree' || action.payload.payment_method == 'sbm_insider' || action.payload.payment_method == 'starpaisa_insider_fino' || action.payload.payment_method == 'insider_paywize') && result.is_guest) {
+            this.router.navigate(['order/details'], { queryParams: { order_number: result.order_number, email_or_phone: action?.payload.email } });
             setTimeout(() => { window.location.reload() }, 1000);
           } else {
             window.open(result.url, "_self");
@@ -136,10 +136,10 @@ export class OrderState {
     return this.orderService.rePayment(action.payload).pipe(
       tap({
         next: result => {
-          if((action.payload.payment_method == 'cod' || action.payload.payment_method == 'bank_transfer' || action.payload.payment_method == 'sbm_insider' || action.payload.payment_method == 'starpaisa_insider_fino') && !result.is_guest) {
+          if ((action.payload.payment_method == 'cod' || action.payload.payment_method == 'bank_transfer' || action.payload.payment_method == 'sbm_insider' || action.payload.payment_method == 'starpaisa_insider_fino' || action.payload.payment_method == 'insider_paywize') && !result.is_guest) {
             this.router.navigateByUrl(`/account/order/details/${result.order_number}`);
-          } else if((action.payload.payment_method == 'cod' || action.payload.payment_method == 'bank_transfer' || action.payload.payment_method == 'sbm_insider' || action.payload.payment_method == 'starpaisa_insider_fino') && result.is_guest) {
-            this.router.navigate([ 'order/details' ], { queryParams: { order_number: result.order_number, email_or_phone: result.email } });
+          } else if ((action.payload.payment_method == 'cod' || action.payload.payment_method == 'bank_transfer' || action.payload.payment_method == 'sbm_insider' || action.payload.payment_method == 'starpaisa_insider_fino' || action.payload.payment_method == 'insider_paywize') && result.is_guest) {
+            this.router.navigate(['order/details'], { queryParams: { order_number: result.order_number, email_or_phone: result.email } });
           } else {
             window.open(result.url, "_self");
           }
@@ -184,7 +184,7 @@ export class OrderState {
           link.click();
           window.URL.revokeObjectURL(url);
         },
-        error: err => { 
+        error: err => {
           throw new Error(err?.error?.message);
         }
       })

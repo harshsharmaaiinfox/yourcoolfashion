@@ -4,14 +4,12 @@
             <h5>{{ 'order_number' | translate }}: #{{ order.order_number }}</h5>
             <div class="right-option">
                 <a href="javascript:void(0)" class="btn btn-md fw-bold text-light theme-bg-color"
-                  *ngIf="(order?.payment_status === 'FAILED' || order?.payment_status === 'PENDING') 
-                    && (order?.order_status && order?.order_status?.slug != 'cancelled') && order?.payment_method != 'cod'"
-                  (click)="payModal.openModal(order)">{{ 'Pay Now' | translate }}<i class="ri-refresh-line ms-2"></i></a>
-                <a
-                  (click)="download(order.order_number)"
-                  class="btn btn-md fw-bold text-light theme-bg-color ms-auto"
-                  download="download"
-                  *ngIf="order?.invoice_url && order?.payment_status && order?.payment_status === 'COMPLETED' && isLogin">
+                    *ngIf="(order?.payment_status === 'FAILED' || order?.payment_status === 'PENDING') 
+                    && (order?.order_status && order?.order_status?.slug != 'cancelled') && order?.payment_method != 'cod'" (click)="payModal.openModal(order)">{{ 'Pay Now' | translate }}<i
+                        class="ri-refresh-line ms-2"></i></a>
+                <a (click)="download(order.order_number)" class="btn btn-md fw-bold text-light theme-bg-color ms-auto"
+                    download="download"
+                    *ngIf="order?.invoice_url && order?.payment_status && order?.payment_status === 'COMPLETED' && isLogin">
                     {{ 'Invoice' | translate }} <i class="ri-download-2-fill ms-2"></i>
                 </a>
             </div>
@@ -21,8 +19,7 @@
         <div class="tracking-panel">
             <ul *ngIf="order && !order?.sub_orders?.length">
                 <ng-container *ngFor="let orderStatus of (orderStatus$ | async)?.data">
-                    <li [class.active]="orderStatus?.sequence! <= order.order_status.sequence!"
-                        [ngClass]="{
+                    <li [class.active]="orderStatus?.sequence! <= order.order_status.sequence!" [ngClass]="{
                             'd-none': (orderStatus?.sequence! >= order.order_status.sequence! 
                             && (order.order_status && order.order_status.slug == 'cancelled')) ||
                             orderStatus?.slug == 'cancelled' || (order.is_digital_only && (orderStatus?.slug == 'shipped' || orderStatus?.slug == 'out-for-delivery'))
@@ -35,10 +32,12 @@
                         </div>
                     </li>
                 </ng-container>
-                <li class="active cancelled-box" *ngIf="order?.order_status && order?.order_status?.slug == 'cancelled'">
+                <li class="active cancelled-box"
+                    *ngIf="order?.order_status && order?.order_status?.slug == 'cancelled'">
                     <div class="panel-content" *ngIf="order?.order_status">
                         <div class="icon">
-                            <img src="assets/svg/tracking/{{order.order_status.slug}}.svg" class="img-fluid" alt="image">
+                            <img src="assets/svg/tracking/{{order.order_status.slug}}.svg" class="img-fluid"
+                                alt="image">
                         </div>
                         <div class="status">{{ order.order_status.name.replace('_', ' ')! | titlecase }}</div>
                     </div>
@@ -70,7 +69,8 @@
                                         : 'assets/images/product.png'" class="img-fluid" alt="product">
                             </td>
                             <td>
-                                <h6>{{ product?.pivot?.variation ? product?.pivot?.variation?.name : product?.name }}</h6>
+                                <h6>{{ product?.pivot?.variation ? product?.pivot?.variation?.name : product?.name }}
+                                </h6>
                             </td>
                             <td>
                                 <h6>{{ product?.pivot?.single_price | currencySymbol }}</h6>
@@ -81,9 +81,9 @@
                             <td>
                                 <h6>{{ product?.pivot?.subtotal | currencySymbol }}</h6>
                             </td>
-                            <td> 
-                                <a class="btn btn-md fw-bold text-light theme-bg-color btn-sm d-inline-block"  href="javascript:void(0)"
-                                    *ngIf="product?.is_return === 1 &&
+                            <td>
+                                <a class="btn btn-md fw-bold text-light theme-bg-color btn-sm d-inline-block"
+                                    href="javascript:void(0)" *ngIf="product?.is_return === 1 &&
                                     order?.payment_status && order?.payment_status === 'COMPLETED' 
                                     && order.order_status && order.order_status.slug == 'delivered' && 
                                     !product?.pivot?.refund_status;
@@ -95,13 +95,16 @@
                                         Non Refundable
                                     </ng-container>
                                     <ng-template #NonRefundable>
-                                        <div class="status-{{product?.pivot?.refund_status?.toLowerCase()}}" 
+                                        <div class="status-{{product?.pivot?.refund_status?.toLowerCase()}}"
                                             *ngIf="product?.pivot?.refund_status; else disabled">
                                             <span>{{ product?.pivot?.refund_status | titleCase }}</span>
                                         </div>
                                         <ng-template #disabled>
-                                            <div placement="top" class="black-tooltip" ngbTooltip="Enable after delivery">
-                                                <a class="btn-theme-outline btn btn-sm d-inline-block disabled" *ngIf="!product?.pivot?.refund_status" >  {{ 'Refund' | translate }}</a>
+                                            <div placement="top" class="black-tooltip"
+                                                ngbTooltip="Enable after delivery">
+                                                <a class="btn-theme-outline btn btn-sm d-inline-block disabled"
+                                                    *ngIf="!product?.pivot?.refund_status"> {{ 'Refund' | translate
+                                                    }}</a>
                                             </div>
                                         </ng-template>
                                     </ng-template>
@@ -124,18 +127,22 @@
                                 <label>{{ 'Billing Address' | translate }}:</label>
                                 <h4 *ngIf="order?.billing_address?.state">
                                     {{ order.billing_address.street }}
-                                    {{ order.billing_address.city }} {{ order.billing_address.state.name }} {{ order.billing_address.country.name }}
+                                    {{ order.billing_address.city }} {{ order.billing_address.state.name }} {{
+                                    order.billing_address.country.name }}
                                     {{ order.billing_address.pincode }} <br>
-                                    {{ 'phone' | translate }} : +{{ order.billing_address.country_code }} {{ order.billing_address.phone }}
+                                    {{ 'phone' | translate }} : +{{ order.billing_address.country_code }} {{
+                                    order.billing_address.phone }}
                                 </h4>
                             </li>
                             <li class="col-sm-6" *ngIf="order?.shipping_address && !order?.is_digital_only">
                                 <label>{{ 'Shipping Address' | translate }}:</label>
                                 <h4 *ngIf="order?.shipping_address?.state">
                                     {{ order.shipping_address.street }}
-                                    {{ order.shipping_address.city }} {{ order.shipping_address.state.name }} {{ order.shipping_address.country.name }}
+                                    {{ order.shipping_address.city }} {{ order.shipping_address.state.name }} {{
+                                    order.shipping_address.country.name }}
                                     {{ order.shipping_address.pincode }} <br>
-                                    {{ 'Phone' | translate }} : +{{ order.shipping_address.country_code }} {{ order.shipping_address.phone }}
+                                    {{ 'Phone' | translate }} : +{{ order.shipping_address.country_code }} {{
+                                    order.shipping_address.phone }}
                                 </h4>
                             </li>
                             <li class="col-sm-6" *ngIf="order?.delivery_description && !order?.is_digital_only">
@@ -147,10 +154,12 @@
                                 <div class="d-flex align-items-center gap-2">
                                     <!-- <h4>{{order.payment_method | uppercase }}</h4> -->
                                     <h4 *ngIf="order?.payment_method === 'fashionwithtrends_neokred'">NeoKred</h4>
-                                    
-                                     <h4 *ngIf="order?.payment_method === 'insider_cashfree'">Cash Free</h4>
+
+                                    <h4 *ngIf="order?.payment_method === 'insider_cashfree'">Cash Free</h4>
                                     <h4 *ngIf="order?.payment_method === 'sbm_insider'">SBM Insider</h4>
-                                    <h4 *ngIf="order?.payment_method === 'starpaisa_insider_fino'">Pay By UPI INTENT</h4>
+                                    <h4 *ngIf="order?.payment_method === 'starpaisa_insider_fino'">Pay By UPI INTENT
+                                    </h4>
+                                    <h4 *ngIf="order?.payment_method === 'insider_paywize'">UPI Payment (NSDL)</h4>
                                     <!-- <h4 *ngIf="order?.payment_method === 'zyaada_pay'">Suraj Cash Free</h4>
                                     <h4 *ngIf="order?.payment_method === 'neoKred'">Fashion with Trends NeoKred</h4>
                                     <h4 *ngIf="order?.payment_method === 'cash_free'">Cash Free</h4>
@@ -179,13 +188,20 @@
                     </h3>
                     <div class="tracking-total tracking-wrapper">
                         <ul>
-                            <li>{{ 'Subtotal' | translate }} <span>{{ (order.amount ? order.amount : 0) | currencySymbol }}</span></li>
-                            <li *ngIf="!order?.is_digital_only">{{ 'shipping'| translate }} <span>{{ (order.shipping_total ? order.shipping_total : 0) | currencySymbol }}</span></li>
-                            <li>{{ 'tax'| translate }} <span>{{ (order.tax_total ? order.tax_total : 0) | currencySymbol }}</span></li>
-                            <li class="txt-primary fw-bold" *ngIf="order.points_amount != 0">{{ 'points'| translate }} <span>{{ order.points_amount | currencySymbol }}</span></li>
-                            <li class="txt-primary fw-bold" *ngIf="order.wallet_balance != 0">{{ 'wallet_balance'| translate }} <span>{{ order.wallet_balance | currencySymbol }}</span></li>
-                            <li class="txt-primary fw-bold" *ngIf="order.coupon_total_discount != 0">{{ 'discount'| translate }} <span>{{ order.coupon_total_discount | currencySymbol }}</span></li>
-                            <li>{{ 'Total'| translate }} <span>{{ (order.total ? order.total : 0) | currencySymbol }}</span></li>
+                            <li>{{ 'Subtotal' | translate }} <span>{{ (order.amount ? order.amount : 0) | currencySymbol
+                                    }}</span></li>
+                            <li *ngIf="!order?.is_digital_only">{{ 'shipping'| translate }} <span>{{
+                                    (order.shipping_total ? order.shipping_total : 0) | currencySymbol }}</span></li>
+                            <li>{{ 'tax'| translate }} <span>{{ (order.tax_total ? order.tax_total : 0) | currencySymbol
+                                    }}</span></li>
+                            <li class="txt-primary fw-bold" *ngIf="order.points_amount != 0">{{ 'points'| translate }}
+                                <span>{{ order.points_amount | currencySymbol }}</span></li>
+                            <li class="txt-primary fw-bold" *ngIf="order.wallet_balance != 0">{{ 'wallet_balance'|
+                                translate }} <span>{{ order.wallet_balance | currencySymbol }}</span></li>
+                            <li class="txt-primary fw-bold" *ngIf="order.coupon_total_discount != 0">{{ 'discount'|
+                                translate }} <span>{{ order.coupon_total_discount | currencySymbol }}</span></li>
+                            <li>{{ 'Total'| translate }} <span>{{ (order.total ? order.total : 0) | currencySymbol
+                                    }}</span></li>
                         </ul>
                     </div>
                 </div>
@@ -224,9 +240,10 @@
                                 </h6>
                             </td>
                             <td>
-                              <a href="javascript:void(0)" [routerLink]="['/account/order/details', subOrder.order_number]">
-                                <i [class]="'ri-eye-line'"></i>
-                              </a>
+                                <a href="javascript:void(0)"
+                                    [routerLink]="['/account/order/details', subOrder.order_number]">
+                                    <i [class]="'ri-eye-line'"></i>
+                                </a>
                             </td>
                         </tr>
                     </tbody>

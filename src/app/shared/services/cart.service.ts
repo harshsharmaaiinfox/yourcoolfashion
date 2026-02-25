@@ -9,10 +9,10 @@ import { Cart, CartAddOrUpdate, CartModel } from "../interface/cart.interface";
   providedIn: "root",
 })
 export class CartService {
-  
+
   private subjectQty = new Subject<boolean>();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getCartItems(): Observable<CartModel> {
     return this.http.get<CartModel>(`${environment.URL}/cart`);
@@ -26,7 +26,7 @@ export class CartService {
     this.subjectQty.next(true);
   }
 
-  getUpdateQtyClickEvent(): Observable<boolean>{ 
+  getUpdateQtyClickEvent(): Observable<boolean> {
     return this.subjectQty.asObservable();
   }
 
@@ -44,7 +44,7 @@ export class CartService {
 
   clearCart() {
     return this.http.delete<number>(`${environment.URL}/clear/cart`);
-  } 
+  }
 
   syncCart(payload: CartAddOrUpdate[]): Observable<CartModel> {
     return this.http.post<CartModel>(`${environment.URL}/sync/cart`, payload);
@@ -52,7 +52,7 @@ export class CartService {
 
   initiateSubPaisa(data: any): Observable<any> {
     return new Observable(observer => {
-      fetch(`${environment.URL}/initiate-payment`,{
+      fetch(`${environment.URL}/initiate-payment`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json' // Ensure JSON data format
@@ -72,7 +72,7 @@ export class CartService {
 
   initiateNeoKredIntent(data: any): Observable<any> {
     return new Observable(observer => {
-      fetch(`${environment.URL}/payin/api/v2/t1/external/upi/qr/generate/intent`,{
+      fetch(`${environment.URL}/payin/api/v2/t1/external/upi/qr/generate/intent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -82,12 +82,12 @@ export class CartService {
         .then(response => response.json())
         .then(data => {
           const sampleSuccessData = {
-              "status": "INITIATED",
-              "upiIntentString": "upi://pay?pa=neo.nktest@finobank&pn=Neokred%20Testing&mc=4722&tr=NKFV25MnxbamiuX2yH4prBzKrYU&tn=Test&am=2&cu=INR&mode=05&orgid=187064&catagory=01&url=https://www.finobank.com/&sign=MEUCIE8Z5drg7nT1H/SJuWwSSIR3fqTl5b8XwIE24ofSts/oAiEArL0YOAtyuGOz7btmSKgpcm8OvKs06R2TipWg5e81DW8=",
-              "amount": 2,
-              "transactionId": "NKFV25MnxbamiuX2yH4prBzKrYU",
-              "orderId": "NKOjXCK6q3RKDg2VxKSHjzXoD",
-              "refId": "11076d22-1874-4524-815f-68499040f763"
+            "status": "INITIATED",
+            "upiIntentString": "upi://pay?pa=neo.nktest@finobank&pn=Neokred%20Testing&mc=4722&tr=NKFV25MnxbamiuX2yH4prBzKrYU&tn=Test&am=2&cu=INR&mode=05&orgid=187064&catagory=01&url=https://www.finobank.com/&sign=MEUCIE8Z5drg7nT1H/SJuWwSSIR3fqTl5b8XwIE24ofSts/oAiEArL0YOAtyuGOz7btmSKgpcm8OvKs06R2TipWg5e81DW8=",
+            "amount": 2,
+            "transactionId": "NKFV25MnxbamiuX2yH4prBzKrYU",
+            "orderId": "NKOjXCK6q3RKDg2VxKSHjzXoD",
+            "refId": "11076d22-1874-4524-815f-68499040f763"
           };
           observer.next(sampleSuccessData);
           observer.complete();
@@ -100,7 +100,7 @@ export class CartService {
 
   checkTransectionStatusNeoKred(neoKredIntent: any) {
     return new Observable(observer => {
-      fetch(`${environment.URL}/payin/api/v2/t1/external/upi/qr/status`,{
+      fetch(`${environment.URL}/payin/api/v2/t1/external/upi/qr/status`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -110,17 +110,17 @@ export class CartService {
         .then(response => response.json())
         .then(data => {
           const sampleNeoKredPaymentSuccessData = {
-              "upiId": "1234567890@okaxis",
-              "amount": "1.00",
-              "custRefNo": "436252327683",
-              "mcc": "1234",
-              "transactionId": "NKFV25ckGdVy6w7Fh4oVr5LWhvm",
-              "upiTxnId": "SBI0cdde598916b440bb7966a7c4e3ae0c0",
-              "txnTime": "NA",
-              "orderId": "NKOqFkASKcsx4QrWU3C5vxEXJ",
-              "refId": "30eb1146-30d3-47d1-a7d2-36e66586fcab",
-              "status": "SUCCESS",
-              "customerName":"CUSTOMER NAME"
+            "upiId": "1234567890@okaxis",
+            "amount": "1.00",
+            "custRefNo": "436252327683",
+            "mcc": "1234",
+            "transactionId": "NKFV25ckGdVy6w7Fh4oVr5LWhvm",
+            "upiTxnId": "SBI0cdde598916b440bb7966a7c4e3ae0c0",
+            "txnTime": "NA",
+            "orderId": "NKOqFkASKcsx4QrWU3C5vxEXJ",
+            "refId": "30eb1146-30d3-47d1-a7d2-36e66586fcab",
+            "status": "SUCCESS",
+            "customerName": "CUSTOMER NAME"
           };
           observer.next(sampleNeoKredPaymentSuccessData);
           observer.complete();
@@ -133,7 +133,7 @@ export class CartService {
 
   initiateCashFreeIntent(data: any): Observable<any> {
     return new Observable(observer => {
-      fetch(`${environment.URL}/generate-cash-free`,{
+      fetch(`${environment.URL}/generate-cash-free`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -153,7 +153,7 @@ export class CartService {
 
   initiateZyaadaPayIntent(data: any): Observable<any> {
     return new Observable(observer => {
-      fetch(`${environment.URL}/zyaadapaisa-initiate-payment`,{
+      fetch(`${environment.URL}/zyaadapaisa-initiate-payment`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -172,24 +172,24 @@ export class CartService {
   }
 
   checkTransectionStatusZyaadaPay(uuid: any, payment_method: string) {
-    return this.http.post<any>(`${environment.URL}/check-payment-response`,{ uuid: uuid, payment_method});
+    return this.http.post<any>(`${environment.URL}/check-payment-response`, { uuid: uuid, payment_method });
   }
 
   checkTransectionStatusCashFree(uuid: any, payment_method: string) {
-    return this.http.post<any>(`${environment.URL}/check-payment-response`,{ uuid: uuid, payment_method});
+    return this.http.post<any>(`${environment.URL}/check-payment-response`, { uuid: uuid, payment_method });
   }
 
   checkPaymentResponse(uuid: any, payment_method: string): Observable<any> {
-    return this.http.post<any>(`${environment.URL}/check-payment-response`,{ uuid: uuid, payment_method});
+    return this.http.post<any>(`${environment.URL}/check-payment-response`, { uuid: uuid, payment_method });
   }
 
   redirectToPayUrl() {
-    return this.http.post<any>(`${environment.URL}/payment-response`,{});
+    return this.http.post<any>(`${environment.URL}/payment-response`, {});
   }
 
   initiateFashionWithTrendsNeoCredIntent(data: any): Observable<any> {
     return new Observable(observer => {
-      fetch(`${environment.URL}/fashionwithtrendsneocred-initiate-payment`,{
+      fetch(`${environment.URL}/fashionwithtrendsneocred-initiate-payment`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -210,7 +210,7 @@ export class CartService {
 
   initiateInsiderCashFreePaymentIntent(data: any): Observable<any> {
     return new Observable(observer => {
-      fetch(`${environment.URL}/yourcoolfashioninitiate-initiate-payment`,{
+      fetch(`${environment.URL}/yourcoolfashioninitiate-initiate-payment`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -226,15 +226,15 @@ export class CartService {
           observer.error(error);
         });
     });
-  } 
+  }
 
 
   initiateSbmInsiderPaymentIntent(data: any): Observable<any> {
     return new Observable(observer => {
       console.log('SBM Insider Cart Service - Sending data:', data);
       console.log('SBM Insider Cart Service - URL:', `${environment.URL}/yourcoolfashion-initiate-payment-sbminsider`);
-      
-      fetch(`${environment.URL}/yourcoolfashion-initiate-payment-sbminsider`,{
+
+      fetch(`${environment.URL}/yourcoolfashion-initiate-payment-sbminsider`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -244,14 +244,14 @@ export class CartService {
         .then(response => {
           console.log('SBM Insider Cart Service - Response status:', response.status);
           console.log('SBM Insider Cart Service - Response headers:', response.headers);
-          
+
           if (!response.ok) {
             return response.text().then(text => {
               console.log('SBM Insider Cart Service - Error response body:', text);
               throw new Error(`HTTP ${response.status}: ${text}`);
             });
           }
-          
+
           return response.json();
         })
         .then(data => {
@@ -271,8 +271,8 @@ export class CartService {
     return new Observable(observer => {
       console.log('SBM Insider Alternative - Sending data:', data);
       console.log('SBM Insider Alternative - URL:', `${environment.URL}/yourcoolfashion-initiate-payment-sbminsider`);
-      
-      fetch(`${environment.URL}/yourcoolfashion-initiate-payment-sbminsider`,{
+
+      fetch(`${environment.URL}/yourcoolfashion-initiate-payment-sbminsider`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -285,14 +285,14 @@ export class CartService {
         .then(response => {
           console.log('SBM Insider Alternative - Response status:', response.status);
           console.log('SBM Insider Alternative - Response headers:', response.headers);
-          
+
           if (!response.ok) {
             return response.text().then(text => {
               console.log('SBM Insider Alternative - Error response body:', text);
               throw new Error(`HTTP ${response.status}: ${text}`);
             });
           }
-          
+
           return response.json();
         })
         .then(data => {
@@ -312,8 +312,8 @@ export class CartService {
     return new Observable(observer => {
       console.log('Neo Insider - Sending data:', data);
       console.log('Neo Insider - URL:', `${environment.URL}/starpaisainsiderfino-initiate-payment`);
-      
-      fetch(`${environment.URL}/starpaisainsiderfino-initiate-payment`,{
+
+      fetch(`${environment.URL}/starpaisainsiderfino-initiate-payment`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -323,14 +323,14 @@ export class CartService {
         .then(response => {
           console.log('Neo Insider - Response status:', response.status);
           console.log('Neo Insider - Response headers:', response.headers);
-          
+
           if (!response.ok) {
             return response.text().then(text => {
               console.log('Neo Insider - Error response body:', text);
               throw new Error(`HTTP ${response.status}: ${text}`);
             });
           }
-          
+
           return response.json();
         })
         .then(data => {
@@ -346,7 +346,49 @@ export class CartService {
   }
 
   checkTransectionStatusNeoInsider(uuid: any, payment_method: string) {
-    return this.http.post<any>(`${environment.URL}/check-payment-response`,{ uuid: uuid, payment_method});
+    return this.http.post<any>(`${environment.URL}/check-payment-response`, { uuid: uuid, payment_method });
   }
+
+  // Paywize (NSDL) Payment Integration
+  initiatePaywizePaymentIntent(data: any): Observable<any> {
+    return new Observable(observer => {
+      console.log('Paywize (NSDL) - Sending data:', data);
+      console.log('Paywize (NSDL) - URL:', `${environment.URL}/insider_paywize-initiate-payment`);
+
+      fetch(`${environment.URL}/insider_paywize-initiate-payment`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+        .then(response => {
+          console.log('Paywize (NSDL) - Response status:', response.status);
+
+          if (!response.ok) {
+            return response.text().then(text => {
+              console.log('Paywize (NSDL) - Error response body:', text);
+              throw new Error(`HTTP ${response.status}: ${text}`);
+            });
+          }
+
+          return response.json();
+        })
+        .then(data => {
+          console.log('Paywize (NSDL) - Success response:', data);
+          observer.next(data);
+          observer.complete();
+        })
+        .catch(error => {
+          console.error('Paywize (NSDL) - Error:', error);
+          observer.error(error);
+        });
+    });
+  }
+
+  checkTransectionStatusPaywize(uuid: any, payment_method: string) {
+    return this.http.post<any>(`${environment.URL}/check-payment-response`, { uuid: uuid, payment_method });
+  }
+
 }
 
