@@ -1,4 +1,17 @@
 User-agent: *
+Allow: /
+
+# Block non-SEO and private routes
 Disallow: /no-index/
+Disallow: /admin/
+Disallow: /login/
+Disallow: /register/
+Disallow: /account/
+Disallow: /cart/
+Disallow: /checkout/
+Disallow: /wishlist/
+Disallow: /order/
+
+# Sitemap
 Sitemap: https://yourcoolfashion.com/sitemap.xml
 
