@@ -2,7 +2,7 @@ import { Menu } from "../interface/menu.interface";
 import { MenuStateModel } from "../state/menu.state";
 
 export const ThemeMenuOptions: any[] = [
-   
+
     // {
     //     "id": 161,
     //     "title": "Kids Fashion",
@@ -28,31 +28,31 @@ export const ThemeMenuOptions: any[] = [
     //     "banner_image": null,
     //     "child": []
     // },
-    {
-        "id": 166,
-        "title": "Winter style studio",
-        "sort": null,
-        "link_type": "link",
-        "mega_menu": 1,
-        "mega_menu_type": "simple",
-        "slug": "winter-collections",
-        "path": "collections?category=winter-collections",
-        "badge_text": null,
-        "badge_color": null,
-        "content_item": null,
-        "item_image_id": null,
-        "banner_image_id": null,
-        "parent_id": null,
-        "is_target_blank": 0,
-        "status": 1,
-        "created_by_id": 1,
-        "created_at": "2025-12-15T09:05:57.000000Z",
-        "product_ids": [],
-        "blog_ids": [],
-        "item_image": null,
-        "banner_image": null,
-        "child": []
-    },
+    // {
+    //     "id": 166,
+    //     "title": "Winter style studio",
+    //     "sort": null,
+    //     "link_type": "link",
+    //     "mega_menu": 1,
+    //     "mega_menu_type": "simple",
+    //     "slug": "winter-collections",
+    //     "path": "collections?category=winter-collections",
+    //     "badge_text": null,
+    //     "badge_color": null,
+    //     "content_item": null,
+    //     "item_image_id": null,
+    //     "banner_image_id": null,
+    //     "parent_id": null,
+    //     "is_target_blank": 0,
+    //     "status": 1,
+    //     "created_by_id": 1,
+    //     "created_at": "2025-12-15T09:05:57.000000Z",
+    //     "product_ids": [],
+    //     "blog_ids": [],
+    //     "item_image": null,
+    //     "banner_image": null,
+    //     "child": []
+    // },
     {
         "id": 162,
         "title": "Modern Man",
@@ -103,7 +103,7 @@ export const ThemeMenuOptions: any[] = [
         "banner_image": null,
         "child": []
     },
-   
+
     {
         "id": 45,
         "title": "Sport & Street",

@@ -1,4 +1,5 @@
-import { Injectable, NgZone } from '@angular/core';
+import { Inject, Injectable, NgZone } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import { Select } from '@ngxs/store';
 import { Observable, filter } from 'rxjs';
 import { ThemeOptionState } from '../state/theme-option.state';
@@ -48,16 +49,17 @@ export class SeoService {
   public setting: Values;
   constructor(private meta: Meta, private router: Router,
     private titleService: Title,
-    private ngZone: NgZone,) { 
+    private ngZone: NgZone,
+    @Inject(DOCUMENT) private document: Document) {
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: any) => {
       this.path = event.url
       this.updateSeo(this.path)
     });
-    
+
     this.fetchData();
-    
+
     // Set initial SEO immediately
     setTimeout(() => {
       this.updateDefaultSeo();
@@ -75,8 +77,8 @@ export class SeoService {
       this.themeOption = option
     })
   }
-  
-  updateSeo(path:string){
+
+  updateSeo(path: string) {
     if (path.includes('product')) {
       if (this.product) {
         this.scoContent = {
@@ -88,8 +90,8 @@ export class SeoService {
       }
       this.customSCO();
     }
-    else if(path.includes('blog')) {
-      if(this.blog){
+    else if (path.includes('blog')) {
+      if (this.blog) {
         this.scoContent = {
           ...this.scoContent,
           'url': window.location.href,
@@ -100,8 +102,8 @@ export class SeoService {
         this.customSCO();
       }
     }
-    else if(path.includes('page')) {
-      if(this.page) {
+    else if (path.includes('page')) {
+      if (this.page) {
         this.scoContent = {
           ...this.scoContent,
           'url': window.location.href,
@@ -111,8 +113,8 @@ export class SeoService {
         }
       }
       this.customSCO();
-    } else if(path.includes('brand')) {
-      if(this.brand) {
+    } else if (path.includes('brand')) {
+      if (this.brand) {
         this.scoContent = {
           ...this.scoContent,
           'url': window.location.href,
@@ -122,8 +124,8 @@ export class SeoService {
         }
       }
       this.customSCO();
-    } else if(path.includes('category')) {
-      if(this.category) {
+    } else if (path.includes('category')) {
+      if (this.category) {
         this.scoContent = {
           ...this.scoContent,
           'url': window.location.href,
@@ -133,22 +135,22 @@ export class SeoService {
         }
       }
       this.customSCO();
-    } 
+    }
     else {
       this.updateDefaultSeo();
     }
   }
 
-  updateDefaultSeo(){
+  updateDefaultSeo() {
     // Default SEO values
     const defaultTitle = "Trendy Men's, Women's, Sports & Streetwear Clothing Online";
-    const defaultDescription = "Discover Stylish men's, women's, sports, and streetwear clothing. Shop the latest fashion online at your Cool Fashion at unbeatable prices.";
-    
+    const defaultDescription = "Shop trendy clothing for men and women at Your Cool Fashion. Discover affordable, stylish outfits, everyday wear, and modern fashion designed for comfort and confidence..";
+
     // Use theme options if available, otherwise use defaults
     const title = this.themeOption?.seo?.meta_title || defaultTitle;
     const description = this.themeOption?.seo?.meta_description || defaultDescription;
     const currentUrl = window.location.href;
- 
+
     this.meta.updateTag({ name: 'title', content: title });
     this.meta.updateTag({ name: 'description', content: description });
 
@@ -166,7 +168,10 @@ export class SeoService {
     this.meta.updateTag({ property: 'twitter:description', content: description });
     this.meta.updateTag({ property: 'twitter:image', content: this.scoContent['og_image'] || this.themeOption?.seo?.og_image?.original_url });
 
-    if(this.themeOption?.general && this.themeOption?.general?.exit_tagline_enable){
+    // Update Canonical Tag
+    this.updateCanonical();
+
+    if (this.themeOption?.general && this.themeOption?.general?.exit_tagline_enable) {
       document.addEventListener('visibilitychange', () => {
         this.messages = this.themeOption.general.taglines;
         this.ngZone.run(() => {
@@ -184,23 +189,23 @@ export class SeoService {
         ...this.scoContent,
         'url': window.location.href,
         'og_title': this.themeOption?.seo?.meta_title || "Trendy Men's, Women's, Sports & Streetwear Clothing Online",
-        'og_description': this.themeOption?.seo?.meta_description || "Discover Stylish men's, women's, sports, and streetwear clothing. Shop the latest fashion online at your Cool Fashion at unbeatable prices.",
+        'og_description': this.themeOption?.seo?.meta_description || "Shop trendy clothing for men and women at Your Cool Fashion. Discover affordable, stylish outfits, everyday wear, and modern fashion designed for comfort and confidence..",
         'og_image': this.themeOption?.seo?.og_image?.original_url,
       }
-      
+
       this.customSCO()
-    }else {
+    } else {
       const siteTitle = this.themeOption?.general?.site_title || "Your Cool Fashion";
       const siteTagline = this.themeOption?.general?.site_tagline || "Trendy Men's, Women's, Sports & Streetwear Clothing Online";
       return this.titleService.setTitle(`${siteTitle} | ${siteTagline}`);
     }
   }
- 
-  customSCO(){
+
+  customSCO() {
     // Default SEO values as fallback
     const defaultTitle = "Trendy Men's, Women's, Sports & Streetwear Clothing Online";
-    const defaultDescription = "Discover Stylish men's, women's, sports, and streetwear clothing. Shop the latest fashion online at your Cool Fashion at unbeatable prices.";
-    
+    const defaultDescription = "Shop trendy clothing for men and women at Your Cool Fashion. Discover affordable, stylish outfits, everyday wear, and modern fashion designed for comfort and confidence..";
+
     const title = this.scoContent['og_title'] || defaultTitle;
     const description = this.scoContent['og_description'] || defaultDescription;
     const currentUrl = this.scoContent['url'] || window.location.href;
@@ -222,6 +227,9 @@ export class SeoService {
     this.meta.updateTag({ property: 'twitter:title', content: title });
     this.meta.updateTag({ property: 'twitter:description', content: description });
     this.meta.updateTag({ property: 'twitter:image', content: this.scoContent['og_image'] || this.themeOption?.seo?.og_image?.original_url });
+
+    // Update Canonical Tag
+    this.updateCanonical();
   }
 
   updateMessage() {
@@ -243,6 +251,22 @@ export class SeoService {
   ngOnDestroy() {
     // Clear the timeout when the component is destroyed
     clearTimeout(this.timeoutId);
+  }
+
+  /**
+   * Creates or updates a self-referencing <link rel="canonical"> tag.
+   * Uses protocol + host + pathname (strips query params and fragments)
+   * to produce a clean canonical URL.
+   */
+  private updateCanonical(): void {
+    const canonicalUrl = window.location.protocol + '//' + window.location.host + window.location.pathname;
+    let link: HTMLLinkElement | null = this.document.querySelector('link[rel="canonical"]');
+    if (!link) {
+      link = this.document.createElement('link');
+      link.setAttribute('rel', 'canonical');
+      this.document.head.appendChild(link);
+    }
+    link.setAttribute('href', canonicalUrl);
   }
 
 }

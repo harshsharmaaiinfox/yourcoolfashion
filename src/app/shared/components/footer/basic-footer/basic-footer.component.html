@@ -8,63 +8,62 @@
             <div class="col-xl-3 col-lg-3 col-sm-6">
                 <div class="footer-logo">
                     <!-- <app-footer-logo [data]="data" [footer]="footer"></app-footer-logo> -->
-                   <h1 class="desk-h">Your go-to for<br> timeless style</h1>
-                   <h2 class="footer-address">Address</h2>
-                   <h3 class="footer-address">
-Office No 253 PLOT NO 11, 2ND FLOOR, VARDHAMAN MARKET PLAZA PITAMPURA, Rani Bagh, Delhi, 110034
-</h3>
+                    <h2 class="desk-h">Your go-to for<br> timeless style</h2>
+                    <h2 class="footer-address">Address</h2>
+                    <h3 class="footer-address">
+                        Office No 253 PLOT NO 11, 2ND FLOOR, VARDHAMAN MARKET PLAZA PITAMPURA, Rani Bagh, Delhi, 110034
+                    </h3>
                 </div>
             </div>
 
 
-            <div class="col-xl-2 col-lg-2 col-sm-3"
-            (click)="toggle('useful_link')">
-            <div class="footer-title" [class.show]="active['useful_link']">
-                <h4>{{ 'Useful Links' | translate }}</h4>
+            <div class="col-xl-2 col-lg-2 col-sm-3" (click)="toggle('useful_link')">
+                <div class="footer-title" [class.show]="active['useful_link']">
+                    <h4>{{ 'Useful Links' | translate }}</h4>
+                </div>
+                <div class="footer-contain">
+                    <!-- <app-footer-links [links]="data?.footer?.useful_link || []"></app-footer-links> -->
+                    <ul>
+                        <li><a href="/aboutus">About Us</a></li>
+                        <li><a href="/Contact-Us">Contact Us</a></li>
+                        <li><a href="/shipping-delivery">Shipping + delivery</a></li>
+                        <li><a href="/return-exchange">Return + Exchange</a></li>
+                        <li><a href="/Refund-and-Cancellation-Policy">Refund and Cancellation Policy</a></li>
+                        <li><a href="/privacy-policy">Privacy Policy</a></li>
+                        <li><a href="/term-condition">Terms & Conditions</a></li>
+                    </ul>
+                    <!-- No Data -->
+                    <app-no-data [class]="'no-data-footer'" [text]="'no_link_found'"
+                        *ngIf="!data?.footer?.useful_link?.length"></app-no-data>
+                </div>
             </div>
-            <div class="footer-contain">
-                <!-- <app-footer-links [links]="data?.footer?.useful_link || []"></app-footer-links> -->
-                 <ul>
-                    <li><a href="/aboutus">About Us</a></li>
-                    <li><a href="/Contact-Us">Contact Us</a></li>
-                    <li><a href="/shipping-delivery">Shipping + delivery</a></li>
-                    <li><a href="/return-exchange">Return + Exchange</a></li>
-                    <li><a href="/Refund-and-Cancellation-Policy">Refund and Cancellation Policy</a></li>
-                    <li><a href="/privacy-policy">Privacy Policy</a></li>
-                    <li><a href="/term-condition">Terms & Conditions</a></li>
-                 </ul>
-                <!-- No Data -->
-                <app-no-data [class]="'no-data-footer'" [text]="'no_link_found'" *ngIf="!data?.footer?.useful_link?.length"></app-no-data>
+            <div class="col-xl-2 col-sm-3" (click)="toggle('help_center')">
+                <div class="footer-title" [class.show]="active['help_center']">
+                    <h4>{{ 'Help Center' | translate }}</h4>
+                </div>
+                <div class="footer-contain">
+                    <app-footer-links [links]="data?.footer?.help_center || []"></app-footer-links>
+                    <!-- No Data -->
+                    <app-no-data [class]="'no-data-footer'" [text]="'no_link_found'"
+                        *ngIf="!data?.footer?.help_center?.length"></app-no-data>
+                </div>
             </div>
-        </div>
-        <div class="col-xl-2 col-sm-3"
-            (click)="toggle('help_center')">
-            <div class="footer-title" [class.show]="active['help_center']">
-                <h4>{{ 'Help Center' | translate }}</h4>
-            </div>
-            <div class="footer-contain">
-                <app-footer-links [links]="data?.footer?.help_center || []"></app-footer-links>
-                <!-- No Data -->
-                <app-no-data [class]="'no-data-footer'" [text]="'no_link_found'" *ngIf="!data?.footer?.help_center?.length"></app-no-data>
-            </div>
-        </div>
-       
-        
-        
-        <div class="col-xl-5 col-lg-3 col-sm-3">
-           <app-footer-about [data]="data" class="mt-3"></app-footer-about>
-                    <div class="col-xl-12 col-lg-4 col-sm-6"
-                    *ngIf="data?.footer?.support_email ||
+
+
+
+            <div class="col-xl-5 col-lg-3 col-sm-3">
+                <app-footer-about [data]="data" class="mt-3"></app-footer-about>
+                <div class="col-xl-12 col-lg-4 col-sm-6" *ngIf="data?.footer?.support_email ||
                         data?.footer?.support_number ||
                         data?.footer?.play_store_url ||
                         data?.footer?.app_store_url">
                     <app-footer-contact [data]="data"></app-footer-contact>
                 </div>
-        </div>
-            
-            
-          
-          
+            </div>
+
+
+
+
         </div>
     </div>
     <div class="sub-footer section-small-space">
@@ -76,4 +75,49 @@ Office No 253 PLOT NO 11, 2ND FLOOR, VARDHAMAN MARKET PLAZA PITAMPURA, Rani Bagh
             </ul>
         </div>
     </div>
+
+    <!-- Footer SEO Content Section -->
+    <div class="footer-seo-content">
+        <div class="footer-seo-inner">
+
+            <h2>About Your Cool Fashion</h2>
+            <p>Your Cool Fashion is a trusted online destination for trendy clothing for <a
+                    href="/collections?category=men&sortBy=asc"><strong>men</strong></a> and <a
+                    href="/collections?category=women&sortBy=asc"><strong>women</strong></a>. We combine modern style,
+                comfort, and affordability, helping you express your personality through outfits designed for everyday
+                wear.</p>
+
+            <h3>Trendy Clothing for Men and Women</h3>
+            <p>Stay updated with the latest fashion trends. Our collections are regularly refreshed with new arrivals,
+                from modern streetwear to casual essentials, keeping your wardrobe stylish and fresh.</p>
+
+            <h3>Everyday Comfort & Style</h3>
+            <p>Our casual clothing is crafted with breathable fabrics, relaxed fits, and modern silhouettes. Whether for
+                work, travel, or daily life, look great while staying comfortable.</p>
+
+            <h3>Affordable Fashion</h3>
+            <p>Looking stylish doesn't have to break the bank. Explore <a
+                    href="/collections?sortBy=asc"><strong>budget-friendly collections</strong></a> that deliver
+                quality, value, and versatility for your wardrobe.</p>
+
+            <h3>Inclusive Fashion</h3>
+            <p>We celebrate every body type with plus size and size-inclusive options. Our designs provide flattering
+                fits and confidence for everyone, reflecting your unique style.</p>
+
+            <h3>Easy Online Shopping</h3>
+            <p>Enjoy a seamless shopping experience with quick browsing, smooth checkout, fast shipping, and reliable
+                service. Your favorite outfits are just a few clicks away.</p>
+
+            <h3>Why Choose Us</h3>
+            <p>Your Cool Fashion combines style, affordability, and inclusivity. Discover trendy clothing for men and
+                women, designed to help you stay fashionable without compromising comfort or budget.</p>
+
+            <h3>Shop the Latest Trends Today</h3>
+            <p>Upgrade your wardrobe with high-quality, stylish, and comfortable outfits that reflect confidence and
+                individuality. Start your fashion journey with <a href="/"><strong>Your Cool Fashion</strong></a> today.
+            </p>
+
+        </div>
+    </div>
+
 </div>
