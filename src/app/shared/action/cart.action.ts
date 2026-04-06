@@ -48,3 +48,8 @@ export class ClearCart {
   static readonly type = "[Cart] Clear";
   constructor() {}
 }
+
+export class HydrateGuestCart {
+  static readonly type = "[Cart] Hydrate Guest";
+  constructor(public items: any[], public total: number, public is_digital_only: boolean) {}
+}

@@ -1,8 +1,8 @@
 import { Injectable } from "@angular/core";
 import { Action, Selector, State, StateContext, Store } from "@ngxs/store";
 import { of, tap } from "rxjs";
-import { GetCartItems, AddToCartLocalStorage, AddToCart, UpdateCart, DeleteCart, 
-          CloseStickyCart, ToggleSidebarCart, ClearCart, ReplaceCart, SyncCart } from "../action/cart.action";
+import { GetCartItems, AddToCartLocalStorage, AddToCart, UpdateCart, DeleteCart,
+          CloseStickyCart, ToggleSidebarCart, ClearCart, ReplaceCart, SyncCart, HydrateGuestCart } from "../action/cart.action";
 import { Cart, CartModel } from "../interface/cart.interface";
 import { CartService } from "../services/cart.service";
 import { NotificationService } from "../services/notification.service";
@@ -36,6 +36,44 @@ export class CartState {
   ngxsOnInit(ctx: StateContext<CartStateModel>) {
     ctx.dispatch(new ToggleSidebarCart(false));
     ctx.dispatch(new CloseStickyCart());
+
+    // Hydrate guest cart from localStorage so checkout/cart pages show items without login
+    try {
+      const isLoggedIn = this.store.selectSnapshot(state => state.auth && state.auth.access_token);
+      if (!isLoggedIn) {
+        const saved = localStorage.getItem('guest_cart');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed && Array.isArray(parsed.items) && parsed.items.length) {
+            const current = ctx.getState();
+            if (!current.items || !current.items.length) {
+              ctx.patchState({
+                items: parsed.items,
+                total: parsed.total || 0,
+                is_digital_only: parsed.is_digital_only ?? false
+              });
+            }
+          }
+        }
+      }
+    } catch (e) {
+      // ignore corrupted storage
+    }
+  }
+
+  private persistGuestCart(ctx: StateContext<CartStateModel>) {
+    try {
+      const isLoggedIn = this.store.selectSnapshot(state => state.auth && state.auth.access_token);
+      if (isLoggedIn) return;
+      const state = ctx.getState();
+      localStorage.setItem('guest_cart', JSON.stringify({
+        items: state.items,
+        total: state.total,
+        is_digital_only: state.is_digital_only
+      }));
+    } catch (e) {
+      // ignore
+    }
   }
 
   @Selector()
@@ -246,6 +284,7 @@ export class CartState {
     output.is_digital_only = output.items.map(item => item.product && item?.product?.product_type).every(item => item == 'digital');
 
     ctx.patchState(output);
+    this.persistGuestCart(ctx);
 
     setTimeout(() => {
       this.store.dispatch(new CloseStickyCart());
@@ -312,6 +351,7 @@ export class CartState {
     });
 
     if (!this.store.selectSnapshot(state => state.auth && state.auth.access_token)) {
+      this.persistGuestCart(ctx);
       return;
     }
     return this.cartService.updateCart(action.payload).pipe(
@@ -366,6 +406,7 @@ export class CartState {
     });
 
     if (!this.store.selectSnapshot(state => state.auth && state.auth.access_token)) {
+      this.persistGuestCart(ctx);
       return;
     }
     return this.cartService.replaceCart(action.payload).pipe(
@@ -393,6 +434,7 @@ export class CartState {
     });
 
     if (!this.store.selectSnapshot(state => state.auth && state.auth.access_token)) {
+      this.persistGuestCart(ctx);
       return;
     }
 
@@ -437,9 +479,19 @@ export class CartState {
     });
   }
 
+  @Action(HydrateGuestCart)
+  hydrateGuestCart(ctx: StateContext<CartStateModel>, action: HydrateGuestCart) {
+    ctx.patchState({
+      items: action.items as any,
+      total: action.total,
+      is_digital_only: action.is_digital_only
+    });
+  }
+
   @Action(ClearCart)
   clearCart(ctx: StateContext<CartStateModel>) {
     if (!this.store.selectSnapshot(state => state.auth && state.auth.access_token)) {
+      try { localStorage.removeItem('guest_cart'); } catch (e) {}
       return ctx.patchState({
         items: [],
         total: 0

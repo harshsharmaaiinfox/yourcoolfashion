@@ -10,7 +10,8 @@ import { AccountState } from '../../../shared/state/account.state';
 import { CartState } from '../../../shared/state/cart.state';
 import { OrderState } from '../../../shared/state/order.state';
 import { Checkout, PlaceOrder } from '../../../shared/action/order.action';
-import { ClearCart } from '../../../shared/action/cart.action';
+import { ClearCart, HydrateGuestCart, SyncCart, GetCartItems } from '../../../shared/action/cart.action';
+import { Register } from '../../../shared/action/auth.action';
 import { AddressModalComponent } from '../../../shared/components/widgets/modal/address-modal/address-modal.component';
 import { Cart } from '../../../shared/interface/cart.interface';
 import { SettingState } from '../../../shared/state/setting.state';
@@ -56,6 +57,11 @@ export class CheckoutComponent {
   @ViewChild('cpn', { static: false }) cpnRef: ElementRef<HTMLInputElement>;
   @ViewChild("payByQRModal") payByQRModal: TemplateRef<any>;
 
+  public displayCartItems: Cart[] = [];
+  public localSubTotal: number = 0;
+  public localShipping: number = 0;
+  public localTax: number = 0;
+  public localTotal: number = 0;
   public form: FormGroup;
   public coupon: boolean = true;
   public couponCode: string;
@@ -238,7 +244,12 @@ export class CheckoutComponent {
       }
     });
 
-    this.localUserCheck = JSON.parse(localStorage.getItem('account') || '');
+    const accountRaw = localStorage.getItem('account');
+    try {
+      this.localUserCheck = accountRaw ? JSON.parse(accountRaw) : null;
+    } catch (e) {
+      this.localUserCheck = null;
+    }
 
   }
 
@@ -314,13 +325,55 @@ export class CheckoutComponent {
 
   ngOnInit() {
     this.checkout$.subscribe(data => this.checkoutTotal = data);
+    this.hydrateGuestCartIfNeeded();
     this.products();
+  }
+
+  private hydrateGuestCartIfNeeded() {
+    try {
+      const isLoggedIn = this.store.selectSnapshot(state => state.auth && state.auth.access_token);
+      if (isLoggedIn) return;
+
+      const currentItems = this.store.selectSnapshot(state => state.cart && state.cart.items) || [];
+      if (currentItems.length) return;
+
+      // Try guest_cart first, then fall back to the NGXS-persisted 'cart' key
+      let parsed: any = null;
+      const guestRaw = localStorage.getItem('guest_cart');
+      if (guestRaw) {
+        try { parsed = JSON.parse(guestRaw); } catch (e) { parsed = null; }
+      }
+      if ((!parsed || !parsed.items || !parsed.items.length)) {
+        const cartRaw = localStorage.getItem('cart');
+        if (cartRaw) {
+          try { parsed = JSON.parse(cartRaw); } catch (e) { parsed = null; }
+        }
+      }
+
+      if (parsed && Array.isArray(parsed.items) && parsed.items.length) {
+        const total = parsed.total || parsed.items.reduce((p: number, c: any) => p + Number(c.sub_total || 0), 0);
+        this.store.dispatch(new HydrateGuestCart(parsed.items, total, !!parsed.is_digital_only));
+      }
+    } catch (e) {
+      // ignore
+    }
   }
 
   products() {
     this.cartItem$.subscribe(items => {
+      // Merge with guest localStorage items if state is empty for a guest
+      let mergedItems: Cart[] = items && items.length ? items : [];
+      if (!mergedItems.length) {
+        const isLoggedIn = this.store.selectSnapshot(state => state.auth && state.auth.access_token);
+        if (!isLoggedIn) {
+          mergedItems = this.readGuestCartFromStorage();
+        }
+      }
+      this.displayCartItems = mergedItems || [];
+      this.calculateLocalTotals();
+
       this.productControl.clear();
-      items.forEach((item: Cart) =>
+      this.displayCartItems.forEach((item: Cart) =>
         this.productControl.push(
           this.formBuilder.group({
             product_id: new FormControl(item?.product_id, [Validators.required]),
@@ -329,6 +382,118 @@ export class CheckoutComponent {
           })
         ));
     });
+  }
+
+  private calculateLocalTotals() {
+    const subTotal = (this.displayCartItems || []).reduce((prev, item: any) => {
+      const unit = item?.variation
+        ? Number(item.variation.sale_price)
+        : (item?.wholesale_price ? Number(item.wholesale_price) : Number(item?.product?.sale_price || 0));
+      const qty = Number(item?.quantity || 0);
+      const line = Number(item?.sub_total ?? (unit * qty));
+      return prev + (isNaN(line) ? 0 : line);
+    }, 0);
+
+    // Simple defaults for guest view — shipping/tax calculated server-side after address is chosen
+    this.localSubTotal = subTotal;
+    this.localShipping = 0;
+    this.localTax = 0;
+    this.localTotal = subTotal + this.localShipping + this.localTax;
+  }
+
+  public registerPassword: string = '';
+  public registerLoading: boolean = false;
+
+  registerAndContinue() {
+    const nameCtrl = this.form.get('name');
+    const emailCtrl = this.form.get('email');
+    const phoneCtrl = this.form.get('phone');
+    nameCtrl?.markAsTouched();
+    emailCtrl?.markAsTouched();
+    phoneCtrl?.markAsTouched();
+
+    if (!nameCtrl?.valid || !emailCtrl?.valid || !phoneCtrl?.valid) {
+      this.notificationService.showError('Please fill Name, Email and Phone correctly.');
+      return;
+    }
+    if (!this.registerPassword || this.registerPassword.length < 6) {
+      this.notificationService.showError('Please enter a password (min 6 characters).');
+      return;
+    }
+
+    const payload: any = {
+      name: nameCtrl.value,
+      email: emailCtrl.value,
+      phone: phoneCtrl.value,
+      country_code: this.form.get('country_code')?.value || '91',
+      password: this.registerPassword,
+      password_confirmation: this.registerPassword
+    };
+
+    this.registerLoading = true;
+    this.store.dispatch(new Register(payload)).subscribe({
+      next: () => {
+        // Sync guest cart to backend after login
+        const itemsToSync = (this.displayCartItems || []).map((item: any) => ({
+          product_id: item?.product_id,
+          variation_id: item?.variation_id || null,
+          quantity: item?.quantity
+        }));
+        const finishAndReload = () => {
+          this.router.navigateByUrl('/checkout').then(() => {
+            setTimeout(() => { window.location.reload(); }, 2000);
+          });
+        };
+
+        if (itemsToSync.length) {
+          this.store.dispatch(new SyncCart(itemsToSync as any)).subscribe({
+            complete: () => {
+              // Keep guest_cart as a safety net until reload completes; it will be cleared on next guest session
+              this.store.dispatch(new GetCartItems());
+              finishAndReload();
+            },
+            error: () => {
+              // Even if sync fails, still navigate — GetCartItems on reload will pull server state
+              finishAndReload();
+            }
+          });
+        } else {
+          finishAndReload();
+        }
+      },
+      error: () => {
+        this.registerLoading = false;
+      },
+      complete: () => {
+        this.registerLoading = false;
+      }
+    });
+  }
+
+  goToLogin() {
+    this.router.navigateByUrl('/auth/login');
+  }
+
+  private readGuestCartFromStorage(): Cart[] {
+    const tryParse = (key: string): any => {
+      try {
+        const raw = localStorage.getItem(key);
+        if (!raw) return null;
+        return JSON.parse(raw);
+      } catch (e) { return null; }
+    };
+
+    // Try dedicated guest_cart key first
+    const guest = tryParse('guest_cart');
+    if (guest && Array.isArray(guest.items) && guest.items.length) {
+      return guest.items as Cart[];
+    }
+    // Fall back to NGXS-persisted cart slice
+    const cart = tryParse('cart');
+    if (cart && Array.isArray(cart.items) && cart.items.length) {
+      return cart.items as Cart[];
+    }
+    return [];
   }
 
   selectShippingAddress(id: number) {
