@@ -81,7 +81,7 @@ export class SettingState {
 
               {
                 name: 'insider_paywize',
-                status: true,
+                status: false,
                 title: 'UPI Payment (NSDL)',
               },
               {
