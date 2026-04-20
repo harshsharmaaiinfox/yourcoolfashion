@@ -86,7 +86,7 @@ export class SettingState {
               },
               {
                 name: 'starpaisa_insider_fino',
-                status: true,
+                status: false,
                 title: 'Pay By UPI INTENT',
 
               },
